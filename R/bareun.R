@@ -50,9 +50,9 @@ tagger <- function(text = "",
     dict_proto <- "protos/custom_dict.proto"
   } else {
     lang_proto <- system.file("protos/language_service.proto",
-      package = "BareunNLP")
+      package = "bareun")
     dict_proto <- system.file("protos/custom_dict.proto",
-      package = "BareunNLP")
+      package = "bareun")
   }
   custom_domain <- domain
   response <- NULL
