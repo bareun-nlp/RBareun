@@ -7,7 +7,7 @@
 as_json_string(tagged)
 }
 \arguments{
-\item{tagged}{BareunNLP tagger result}
+\item{tagged}{Bareun tagger result}
 }
 \value{
 returns JSON string

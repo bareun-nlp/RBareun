@@ -7,7 +7,7 @@
 dict_list(tagged)
 }
 \arguments{
-\item{tagged}{BareunNLP tagger result}
+\item{tagged}{Bareun tagger result}
 }
 \value{
 returns dict

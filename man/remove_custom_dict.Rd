@@ -7,7 +7,7 @@
 remove_custom_dict(tagged, names)
 }
 \arguments{
-\item{tagged}{BareunNLP tagger result}
+\item{tagged}{Bareun tagger result}
 
 \item{name}{name of custom dictionary}
 }

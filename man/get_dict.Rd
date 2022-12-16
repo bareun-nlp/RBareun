@@ -7,7 +7,7 @@
 get_dict(tagged, name)
 }
 \arguments{
-\item{tagged}{BareunNLP tagger result}
+\item{tagged}{Bareun tagger result}
 
 \item{name}{name of custom dictionary}
 }

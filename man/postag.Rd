@@ -7,7 +7,7 @@
 postag(tagged = NULL, text = "", matrix = FALSE)
 }
 \arguments{
-\item{tagged}{BareunNLP tagger result}
+\item{tagged}{Bareun tagger result}
 
 \item{text}{input text}
 

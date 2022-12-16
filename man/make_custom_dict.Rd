@@ -7,7 +7,7 @@
 make_custom_dict(tagged, domain, nps, cps, carets, vvs, vas)
 }
 \arguments{
-\item{tagged}{BareunNLP tagger result}
+\item{tagged}{Bareun tagger result}
 
 \item{domain}{domain name of custom dictionary}
 

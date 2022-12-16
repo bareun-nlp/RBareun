@@ -7,7 +7,7 @@
 print_dict_all(tagged)
 }
 \arguments{
-\item{tagged}{BareunNLP tagger result}
+\item{tagged}{Bareun tagger result}
 }
 \value{
 prints all contents of all sets

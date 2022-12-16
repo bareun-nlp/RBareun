@@ -7,7 +7,7 @@
 pos(tagged = NULL, text = "")
 }
 \arguments{
-\item{tagged}{BareunNLP tagger result}
+\item{tagged}{Bareun tagger result}
 
 \item{text}{input text}
 }

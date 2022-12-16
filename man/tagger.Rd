@@ -2,7 +2,7 @@
 % Please edit documentation in R/bareun.R
 \name{tagger}
 \alias{tagger}
-\title{Call BareunNLP server to read postag result message for the sentences}
+\title{Call Bareun server to read postag result message for the sentences}
 \usage{
 tagger(
   text = "",
@@ -15,9 +15,9 @@ tagger(
 \arguments{
 \item{text}{string - subject sentences splitted by newlines(\\n)}
 
-\item{server}{string - BareunNLP grpc server address}
+\item{server}{string - Bareun grpc server address}
 
-\item{port}{number - BareunNLP grpc server port}
+\item{port}{number - Bareun grpc server port}
 
 \item{domain}{string - custom domain (custom dictionary)}
 
@@ -28,7 +28,7 @@ returns tagged object
 }
 \description{
 \itemize{
-\item BareunNLP grpc 서버를 호출하여 입력 문장(들)의 분석 결과를 가져 온다
+\item Bareun grpc 서버를 호출하여 입력 문장(들)의 분석 결과를 가져 온다
 }
 }
 \examples{

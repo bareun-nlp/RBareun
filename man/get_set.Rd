@@ -7,7 +7,7 @@
 get_set(tagged, set_name)
 }
 \arguments{
-\item{tagged}{BareunNLP tagger result}
+\item{tagged}{Bareun tagger result}
 
 \item{set_name}{name of set (np, cp, caret)}
 }

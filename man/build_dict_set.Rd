@@ -7,7 +7,7 @@
 build_dict_set(tagged, domain, name, dict_set)
 }
 \arguments{
-\item{tagged}{BareunNLP tagger result}
+\item{tagged}{Bareun tagger result}
 
 \item{domain}{domain name of custom dictionary}
 
