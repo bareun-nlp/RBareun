@@ -6,7 +6,7 @@
 ## Install
 
 - 설치에 앞서, Grpc 라이브러리를 직접 컴파일 설치해야 합니다.
-➡️ [INSTALL](https://github.com/bareun/RBareun/blob/main/INSTALL.md) 내용 참고 
+➡️ [INSTALL](https://github.com/bareun-nlp/RBareun/blob/main/INSTALL.md) 내용 참고 
 - 패키지 설치 방법
 ```
 library(devtools)  
