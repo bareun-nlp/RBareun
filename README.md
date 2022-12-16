@@ -1,7 +1,7 @@
 # RBareun
 
-* R package for BareunNLP
-* About BareunNLP: https://license.baikal.ai/
+* R package for Bareun
+* About Bareun: https://license.baikal.ai/
 
 ## Install
 
@@ -23,7 +23,7 @@ library(bareun)
 
 ## Functions
 
-- tagger: BareunNLP 서버를 호출하여 문장(들)을 분석
+- tagger: Bareun 서버를 호출하여 문장(들)을 분석
 - postag: 분석한 결과/문장의 음절, 태그 리스트 출력
 - pos: 분석한 결과/문장을 음절/태그 문자열 리스트로 출력
 - morphs: 분석한 결과/문장의 음절 리스트 출력

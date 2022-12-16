@@ -1,4 +1,4 @@
-# package bareun: BareunNLP grpc client
+# package bareun: Bareun grpc client
 
 library(curl)
 library(grpc)
@@ -26,13 +26,13 @@ tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
   client$AnalyzeSyntax$call(example)
 }
 
-#' Call BareunNLP server to read postag result message for the sentences
+#' Call Bareun server to read postag result message for the sentences
 #'
-#' - BareunNLP grpc 서버를 호출하여 입력 문장(들)의 분석 결과를 가져 온다
+#' - Bareun grpc 서버를 호출하여 입력 문장(들)의 분석 결과를 가져 온다
 #'
 #' @param text string - subject sentences splitted by newlines(\\n)
-#' @param server string - BareunNLP grpc server address
-#' @param port number - BareunNLP grpc server port
+#' @param server string - Bareun grpc server address
+#' @param port number - Bareun grpc server port
 #' @param domain string - custom domain (custom dictionary)
 #' @param local bool - use local protobuf files, if TRUE
 #' @return returns tagged object
@@ -75,7 +75,7 @@ tagger <- function(text = "",
 #'
 #' - 결과를 JSON 문자열로 출력
 #'
-#' @param tagged BareunNLP tagger result
+#' @param tagged Bareun tagger result
 #' @return returns JSON string
 #' @export
 as_json_string <- function(tagged) {
@@ -90,7 +90,7 @@ as_json_string <- function(tagged) {
 #'
 #' - 결과를 읽을 수 있는 JSON 문자열로 화면 출력
 #'
-#' @param tagged BareunNLP tagger result
+#' @param tagged Bareun tagger result
 #' @return prints JSON string
 #' @export
 print_as_json <- function(tagged) {
@@ -150,7 +150,7 @@ print_as_json <- function(tagged) {
 #' - 결과/문장을 (음절, 형태소태그) 리스트의 리스트로 출력
 #' - 새로운 문장이 주어지면 결과를 변경하고, 문장이 주어지지 않으면 이전 결과를 다시 사용
 #'
-#' @param tagged BareunNLP tagger result
+#' @param tagged Bareun tagger result
 #' @param text input text
 #' @param matrix if TRUE, result output to matrix not list (default = FALSE)
 #' @return returns array of lists for (morpheme, tag)
@@ -201,7 +201,7 @@ postag <- function(tagged = NULL, text = "", matrix = FALSE) {
 #' - 결과/문장을 '음절/태그' 문자열 리스트로 출력
 #' - 새로운 문장이 주어지면 결과를 변경하고, 문장이 주어지지 않으면 이전 결과를 다시 사용
 #'
-#' @param tagged BareunNLP tagger result
+#' @param tagged Bareun tagger result
 #' @param text input text
 #' @return returns array of words 'morpheme/tag'
 #' @examples
@@ -229,7 +229,7 @@ pos <- function(tagged = NULL, text = "") {
 #' - 결과/문장의 음절 리스트만 출력
 #' - 새로운 문장이 주어지면 결과를 변경하고, 문장이 주어지지 않으면 이전 결과를 다시 사용
 #'
-#' @param tagged BareunNLP tagger result
+#' @param tagged Bareun tagger result
 #' @param text input text
 #' @return returns array of list for morphemes
 #' @examples
@@ -273,7 +273,7 @@ morphs <- function(tagged = NULL, text = "") {
 #' - 결과/문장의 명사 리스트만 출력
 #' - 새로운 문장이 주어지면 결과를 변경하고, 문장이 주어지지 않으면 이전 결과를 다시 사용
 #'
-#' @param tagged BareunNLP tagger result
+#' @param tagged Bareun tagger result
 #' @param text input text
 #' @return returns array of list for nouns
 #' @examples
@@ -303,7 +303,7 @@ nouns <- function(tagged = NULL, text = "") {
 #' - 결과/문장의 동사 리스트만 출력
 #' - 새로운 문장이 주어지면 결과를 변경하고, 문장이 주어지지 않으면 이전 결과를 다시 사용
 #'
-#' @param tagged BareunNLP tagger result
+#' @param tagged Bareun tagger result
 #' @param text input text
 #' @return returns array of list for verbs
 #' @examples
@@ -340,7 +340,7 @@ verbs <- function(tagged = NULL, text = "") {
 #'
 #' - 사용자 사전의 목록 출력
 #'
-#' @param tagged BareunNLP tagger result
+#' @param tagged Bareun tagger result
 #' @return returns dict
 #' @export
 dict_list <- function(tagged) {
@@ -356,7 +356,7 @@ dict_list <- function(tagged) {
 #'
 #' - 지정된 사용자 사전 읽어오기
 #'
-#' @param tagged BareunNLP tagger result
+#' @param tagged Bareun tagger result
 #' @param name name of custom dictionary
 #' @return returns dict
 #' @export
@@ -386,7 +386,7 @@ get_dict <- function(tagged, name) {
 #'
 #' - 사용자 사전 세트별 내용 출력
 #'
-#' @param tagged BareunNLP tagger result
+#' @param tagged Bareun tagger result
 #' @param set_name name of set (np, cp, caret)
 #' @return returns list of words
 #' @export
@@ -403,7 +403,7 @@ get_set <- function(tagged, set_name) {
 #'
 #' - 사용자 사전 내용 모두 출력
 #'
-#' @param tagged BareunNLP tagger result
+#' @param tagged Bareun tagger result
 #' @return prints all contents of all sets
 #' @export
 print_dict_all <- function(tagged) {
@@ -423,7 +423,7 @@ print_dict_all <- function(tagged) {
 #'
 #' - 사용자 사전 한 세트 만들기
 #'
-#' @param tagged BareunNLP tagger result
+#' @param tagged Bareun tagger result
 #' @param domain domain name of custom dictionary
 #' @param name name of dictionary set
 #' @param dict_set set of dictionary contents(values)
@@ -447,7 +447,7 @@ build_dict_set <- function(tagged, domain, name, dict_set) {
 #'
 #' - 사용자 사전 만들고 업로드(저장)
 #'
-#' @param tagged BareunNLP tagger result
+#' @param tagged Bareun tagger result
 #' @param domain domain name of custom dictionary
 #' @param nps set of np-set dictinary
 #' @param cps set of cp-set dictinary
@@ -477,7 +477,7 @@ make_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
 #'
 #' - 사용자 사전(들)을 삭제
 #'
-#' @param tagged BareunNLP tagger result
+#' @param tagged Bareun tagger result
 #' @param name name of custom dictionary
 #' @return print results
 #' @export

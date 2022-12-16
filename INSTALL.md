@@ -1,4 +1,4 @@
-Install Guide
+Installation Guide
 ---
 
 ## 1. Linux (Ubuntu 18.0 이상)
