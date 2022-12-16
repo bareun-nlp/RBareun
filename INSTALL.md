@@ -13,7 +13,7 @@ sudo apt install -y clang libc++-dev
 sudo apt install -y libprotobuf-dev libprotoc-dev
 ```
 
-- grpc c++ 라이브러리를 직접 소스에서 컴파일, 설치해야 함.
+- grpc c++ 라이브러리 컴파일 & 설치
 ```
 # install_grpc.sh
 # - local install dir
@@ -53,7 +53,7 @@ brew install autoconf automake libtool shtool pkg-config
 brew install protobuf openssl
 ```
 
-- grpc c++ 라이브러리 컴파일, 설치
+- grpc c++ 라이브러리 컴파일 & 설치
 ```
 # install local
 export GRPC_INSTALL_DIR=$HOME/.local
@@ -88,15 +88,15 @@ popd
 ## 3. 공통: R에서 설치
 
 ```
-> install.packagas('devtools')
-> install.packages('RProtoBuf')
-> devtools::install_github('nfultz/grpc')
-> devtools::install_github("bareun-nlp/RBareun")
+install.packagas('devtools')
+install.packages('RProtoBuf')
+devtools::install_github('nfultz/grpc')
+devtools::install_github("bareun-nlp/RBareun")
 ```
 
-  - 참고.1: https://github.com/grpc/grpc/blob/master/BUILDING.md
+  - 참고.1: [gRPC C++ - Building from source](https://github.com/grpc/grpc/blob/master/BUILDING.md)
 
-  - 참고.2: devtools를 리눅스에 처음 설치할 경우 참고
+  - 참고.2: 리눅스 R에서 devtools를 처음 설치하기 전에 필요한 라이브러리 설치
 ```
 sudo apt install libxml2-dev libssl-dev libcurl4-openssl-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
 ```
