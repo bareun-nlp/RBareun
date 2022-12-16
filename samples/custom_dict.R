@@ -1,3 +1,5 @@
+# 사용자 사전 사용 예제
+
 library(grpc)
 library(RProtoBuf)
 library(bareun)
@@ -24,4 +26,4 @@ print_dict <- function(server = test, domain = example) {
 }
 
 t <- tagger(, server = test, domain = example)
-morphs(t, "효정이는 오마이걸의 리더입니다.")
+morphs(t, "효정이는 오마이걸의 리덥니다.")

@@ -5,15 +5,21 @@
 
 ## Install
 
+- 설치에 앞서, Grpc 라이브러리를 직접 컴파일 설치해야 합니다.
+➡️ [INSTALL](https://github.com/bareun/RBareun/blob/main/INSTALL.md) 내용 참고 
+- 패키지 설치 방법
+```
 library(devtools)  
-devtools::install_github("bareun/RBareun")  
-
-➡️ [INSTALL](https://github.com/bareun/RBareun/blob/main/INSTALL.md) 파일 내용 참고 
+devtools::install_github("bareun-nlp/RBareun")  
+```
 
 ## Usage
 
+- 패키지 사용 방법
+```
 library(RProtoBuf)  
 library(bareun)
+```
 
 ## Functions
 
@@ -101,47 +107,24 @@ $tag
 
 ## Examples / 사용자 사전
 
-- 호출: 처음에는 사전이 없습니다.
+- 만들기 & 등록하기
 ```
-> t <- tagger()
-> dict_list(t)
-NULL
-```
-- 만들기: 5세트를 모두 입력해야 합니다.
-```
-> np <- c("고유명사1", "고유명사2")
-> cp <- c("복합명사1", "복합명사2")
-> caret <- c("분리^사전1", "분리^사전2")
-> vv <- c("동사1", "동사2")
-> va <- c("형용사1", "형용사2")
-> make_custom_dict(t, "사용자", np, cp, caret, vv, va)
+> np <- c("청하", "트와이스", "티키타카", "TIKITAKA", "오마이걸")
+> cp <- c("자유여행", "방역당국", "코로나19", "주술부", "완전주의")
+> caret <- c("주어^역할", "주어^술어^구조", "하급^공무원")
+> vv <- c("카톡하다", "인스타하다")
+> va <- c("혜자스럽다", "창렬하다")
+> make_custom_dict(t, "본보기", np, cp, caret, vv, va)
 [1] "사용자 : 업데이트 성공"
 ```
-- 확인: 새 사전이 생겼습니다.
-```
-> dict_list(t)
-[1] "사용자"
-> get_dict(t, "사용자")
-message of type 'baikal.language.GetCustomDictionaryResponse' with 2 fields set
-> print_dict_all(t)
-[1] "-> 고유명사 사전"
-[1] "고유명사1" "고유명사2"
-[1] "-> 복합명사 사전"
-[1] "복합명사1" "복합명사2"
-[1] "-> 분리 사전"
-[1] "분리^사전1" "분리^사전2"
-[1] "-> 동사 사전"
-[1] "동사1" "동사2"
-[1] "-> 형용사 사전"
-[1] "형용사1" "형용사2"
-```
-- 삭제: 지웁니다.
-```
-> remove_custom_dict(t, "사용자")
-[1] "사용자" "TRUE"
-> dict_list(t)
-NULL
-```
+- 사전 기능 테스트
+
+| 문장 | 사전이 없을때 결과 | 사전이 적용된 결과 | 설명 |
+| ------ | ------ | ------ | ------ |
+| 효정이는 오마이걸의 리덥니다 | [1,] "효정이" "NNP" <br>[2,] "는"     "JX"<br>[3,] "오마이" "NNG"<br>[4,] "걸"     "NNG"<br>[5,] "의"     "JKG"<br>[6,] "리더"   "NNG"<br>[7,] "이"     "VCP"<br>[8,] "ㅂ니다" "EF" | [1,] "효정이"   "NNP"<br>[2,] "는"       "JX"<br>[3,] <b>"오마이걸" "NNP"</b><br>[4,] "의"       "JKG"<br>[5,] "리더"     "NNG"<br>[6,] "이"       "VCP"<br>[7,] "ㅂ니다"   "EF" | '오마이걸'이 고유명사(NNP)로 처리 |
+| 자유여행으로 갈겁니다 | [1,] "자유"   "NNG"<br>[2,] "여행"   "NNG"<br>[3,] "으로"   "JKB"<br>[4,] "가"     "VV"<br>[5,] "ㄹ"     "ETM"<br>[6,] "거"     "NNB"<br>[7,] "이"     "VCP"<br>[8,] "ㅂ니다" "EF" | [1,] <b>"자유여행" "NNG"</b><br>[2,] "으로"     "JKB"<br>[3,] "가"       "VV"<br>[4,] "ㄹ"       "ETM"<br>[5,] "거"       "NNB"<br>[6,] "이"       "VCP"<br>[7,] "ㅂ니다"   "EF"| '자유여행' 복합명사로 한 단어처럼 처리 |
+| 이따가 카톡해라 | [1,] "이따가" "MAG"<br>[2,] "카톡"   "NNP"<br>[3,] "하"     "VV"<br>[4,] "아라"   "EF"<br> | [1,] "이따가" "MAG"<br>[2,] <b>"카톡하" "VV"</b><br>[3,] "아라"   "EF"<br> | '카톡하다'가 '카톡(명사)+하'가 아니라 동사로 처리 |
+
 
 ---
 
