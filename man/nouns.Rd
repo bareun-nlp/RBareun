@@ -8,12 +8,15 @@ nouns(tagged = NULL, text = "")
 }
 \arguments{
 \item{tagged}{BareunNLP tagger result}
+
+\item{text}{input text}
 }
 \value{
 returns array of list for nouns
 }
 \description{
-형태소 분석 결과의 명사 배열 반환.
+결과/문장의 명사 리스트만 출력
+새로운 문장이 주어지면 결과를 변경하고, 문장이 주어지지 않으면 이전 결과를 다시 사용
 }
 \examples{
 > nouns(, "결과를 문자열로 바꾼다.")

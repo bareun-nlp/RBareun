@@ -13,5 +13,5 @@ as_json_string(tagged)
 returns JSON string
 }
 \description{
-결과를 JSON 문자열로 변환.
+결과를 JSON 문자열로 출력
 }

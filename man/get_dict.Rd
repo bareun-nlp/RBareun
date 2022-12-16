@@ -15,5 +15,5 @@ get_dict(tagged, name)
 returns dict
 }
 \description{
-사용자 사전 가져오기.
+지정된 사용자 사전 읽어오기
 }

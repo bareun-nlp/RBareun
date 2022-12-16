@@ -9,13 +9,16 @@ postag(tagged = NULL, text = "", matrix = FALSE)
 \arguments{
 \item{tagged}{BareunNLP tagger result}
 
+\item{text}{input text}
+
 \item{matrix}{if TRUE, result output to matrix not list (default = FALSE)}
 }
 \value{
 returns array of lists for (morpheme, tag)
 }
 \description{
-결과에서 (음절, 형태소 태그)의 배열을 반환.
+결과/문장을 (음절, 형태소태그) 리스트의 리스트로 출력
+새로운 문장이 주어지면 결과를 변경하고, 문장이 주어지지 않으면 이전 결과를 다시 사용
 }
 \examples{
 > postag(, "결과를 문자열로 바꾼다.", TRUE)

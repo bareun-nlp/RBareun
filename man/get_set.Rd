@@ -15,5 +15,5 @@ get_set(tagged, set_name)
 returns list of words
 }
 \description{
-사용자 사전 세트별 내용 보기.
+사용자 사전 세트별 내용 출력
 }

@@ -24,12 +24,13 @@ library(bareun)
 ## Functions
 
 - tagger: BareunNLP 서버를 호출하여 문장(들)을 분석
-- postag: 분석한 문장의 음절, 태그 배열 보기
-- morphs: 분석한 문장의 음절 배열 보기
-- nouns: 분석한 문장의 명사 배열 보기
-- verbs: 분석한 문장의 동사 배열 보기
-- as_json_string: 분석 결과를 JSON 문자열 반환
-- print_as_json: 분석 결과를 JSON 으로 표시
+- postag: 분석한 결과/문장의 음절, 태그 리스트 출력
+- pos: 분석한 결과/문장을 음절/태그 문자열 리스트로 출력
+- morphs: 분석한 결과/문장의 음절 리스트 출력
+- nouns: 분석한 결과/문장의 명사 리스트 출력
+- verbs: 분석한 결과/문장의 동사 리스트 출력
+- as_json_string: 분석 결과를 JSON 문자열로 출력
+- print_as_json: 분석 결과를 읽을 수 있는 JSON 화면 출력
 - dict_list: 등록된 사용자 사전 목록
 - get_dict: 사용자 사전 가져오기
 - print_dict_all: 사용자 사전 내용 보기

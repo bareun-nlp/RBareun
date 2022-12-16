@@ -15,5 +15,5 @@ remove_custom_dict(tagged, names)
 print results
 }
 \description{
-사용자 사전 삭제.
+사용자 사전(들)을 삭제
 }
