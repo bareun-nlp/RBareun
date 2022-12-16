@@ -13,5 +13,7 @@ print_dict_all(tagged)
 prints all contents of all sets
 }
 \description{
-사용자 사전 내용 모두 출력
+\itemize{
+\item 사용자 사전 내용 모두 출력
+}
 }

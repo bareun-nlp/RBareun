@@ -17,8 +17,10 @@ postag(tagged = NULL, text = "", matrix = FALSE)
 returns array of lists for (morpheme, tag)
 }
 \description{
-결과/문장을 (음절, 형태소태그) 리스트의 리스트로 출력
-새로운 문장이 주어지면 결과를 변경하고, 문장이 주어지지 않으면 이전 결과를 다시 사용
+\itemize{
+\item 결과/문장을 (음절, 형태소태그) 리스트의 리스트로 출력
+\item 새로운 문장이 주어지면 결과를 변경하고, 문장이 주어지지 않으면 이전 결과를 다시 사용
+}
 }
 \examples{
 > postag(, "결과를 문자열로 바꾼다.", TRUE)

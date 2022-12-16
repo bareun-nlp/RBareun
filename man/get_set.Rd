@@ -15,5 +15,7 @@ get_set(tagged, set_name)
 returns list of words
 }
 \description{
-사용자 사전 세트별 내용 출력
+\itemize{
+\item 사용자 사전 세트별 내용 출력
+}
 }

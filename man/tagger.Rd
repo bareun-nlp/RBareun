@@ -27,7 +27,9 @@ tagger(
 returns tagged object
 }
 \description{
-BareunNLP grpc 서버를 호출하여 입력 문장(들)의 분석 결과를 가져 온다
+\itemize{
+\item BareunNLP grpc 서버를 호출하여 입력 문장(들)의 분석 결과를 가져 온다
+}
 }
 \examples{
 tagged <- tagger("결과를 문자열로 바꾼다.")

@@ -15,5 +15,7 @@ get_dict(tagged, name)
 returns dict
 }
 \description{
-지정된 사용자 사전 읽어오기
+\itemize{
+\item 지정된 사용자 사전 읽어오기
+}
 }

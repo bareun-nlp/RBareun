@@ -15,8 +15,10 @@ morphs(tagged = NULL, text = "")
 returns array of list for morphemes
 }
 \description{
-결과/문장의 음절 리스트만 출력
-새로운 문장이 주어지면 결과를 변경하고, 문장이 주어지지 않으면 이전 결과를 다시 사용
+\itemize{
+\item 결과/문장의 음절 리스트만 출력
+\item 새로운 문장이 주어지면 결과를 변경하고, 문장이 주어지지 않으면 이전 결과를 다시 사용
+}
 }
 \examples{
 > morphs(, "결과를 문자열로 바꾼다.")

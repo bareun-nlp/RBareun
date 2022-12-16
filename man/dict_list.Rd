@@ -13,5 +13,7 @@ dict_list(tagged)
 returns dict
 }
 \description{
-사용자 사전의 목록 출력
+\itemize{
+\item 사용자 사전의 목록 출력
+}
 }

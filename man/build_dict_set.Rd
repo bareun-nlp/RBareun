@@ -19,5 +19,7 @@ build_dict_set(tagged, domain, name, dict_set)
 returns DictSet
 }
 \description{
-사용자 사전 한 세트 만들기
+\itemize{
+\item 사용자 사전 한 세트 만들기
+}
 }

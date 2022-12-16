@@ -25,5 +25,7 @@ make_custom_dict(tagged, domain, nps, cps, carets, vvs, vas)
 print result
 }
 \description{
-사용자 사전 만들고 업로드(저장)
+\itemize{
+\item 사용자 사전 만들고 업로드(저장)
+}
 }

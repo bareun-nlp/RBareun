@@ -13,5 +13,7 @@ print_as_json(tagged)
 prints JSON string
 }
 \description{
-결과를 읽을 수 있는 JSON 문자열로 화면 출력
+\itemize{
+\item 결과를 읽을 수 있는 JSON 문자열로 화면 출력
+}
 }

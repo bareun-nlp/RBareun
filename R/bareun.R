@@ -28,7 +28,7 @@ tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
 
 #' Call BareunNLP server to read postag result message for the sentences
 #'
-#' BareunNLP grpc 서버를 호출하여 입력 문장(들)의 분석 결과를 가져 온다
+#' - BareunNLP grpc 서버를 호출하여 입력 문장(들)의 분석 결과를 가져 온다
 #'
 #' @param text string - subject sentences splitted by newlines(\\n)
 #' @param server string - BareunNLP grpc server address
@@ -73,7 +73,7 @@ tagger <- function(text = "",
 
 #' Return JSON string for response message
 #'
-#' 결과를 JSON 문자열로 출력
+#' - 결과를 JSON 문자열로 출력
 #'
 #' @param tagged BareunNLP tagger result
 #' @return returns JSON string
@@ -88,7 +88,7 @@ as_json_string <- function(tagged) {
 
 #' Print JSON string for response message
 #'
-#' 결과를 읽을 수 있는 JSON 문자열로 화면 출력
+#' - 결과를 읽을 수 있는 JSON 문자열로 화면 출력
 #'
 #' @param tagged BareunNLP tagger result
 #' @return prints JSON string
@@ -147,8 +147,8 @@ print_as_json <- function(tagged) {
 
 #' Return array of (morpheme, postag) pairs
 #'
-#' 결과/문장을 (음절, 형태소태그) 리스트의 리스트로 출력
-#' 새로운 문장이 주어지면 결과를 변경하고, 문장이 주어지지 않으면 이전 결과를 다시 사용
+#' - 결과/문장을 (음절, 형태소태그) 리스트의 리스트로 출력
+#' - 새로운 문장이 주어지면 결과를 변경하고, 문장이 주어지지 않으면 이전 결과를 다시 사용
 #'
 #' @param tagged BareunNLP tagger result
 #' @param text input text
@@ -198,8 +198,8 @@ postag <- function(tagged = NULL, text = "", matrix = FALSE) {
 
 #' Return array of morpheme/postag words
 #'
-#' 결과/문장을 '음절/태그' 문자열 리스트로 출력
-#' 새로운 문장이 주어지면 결과를 변경하고, 문장이 주어지지 않으면 이전 결과를 다시 사용
+#' - 결과/문장을 '음절/태그' 문자열 리스트로 출력
+#' - 새로운 문장이 주어지면 결과를 변경하고, 문장이 주어지지 않으면 이전 결과를 다시 사용
 #'
 #' @param tagged BareunNLP tagger result
 #' @param text input text
@@ -226,8 +226,8 @@ pos <- function(tagged = NULL, text = "") {
 
 #' Return array of Morphemes
 #'
-#' 결과/문장의 음절 리스트만 출력
-#' 새로운 문장이 주어지면 결과를 변경하고, 문장이 주어지지 않으면 이전 결과를 다시 사용
+#' - 결과/문장의 음절 리스트만 출력
+#' - 새로운 문장이 주어지면 결과를 변경하고, 문장이 주어지지 않으면 이전 결과를 다시 사용
 #'
 #' @param tagged BareunNLP tagger result
 #' @param text input text
@@ -270,8 +270,8 @@ morphs <- function(tagged = NULL, text = "") {
 
 #' Return array of Nouns
 #'
-#' 결과/문장의 명사 리스트만 출력
-#' 새로운 문장이 주어지면 결과를 변경하고, 문장이 주어지지 않으면 이전 결과를 다시 사용
+#' - 결과/문장의 명사 리스트만 출력
+#' - 새로운 문장이 주어지면 결과를 변경하고, 문장이 주어지지 않으면 이전 결과를 다시 사용
 #'
 #' @param tagged BareunNLP tagger result
 #' @param text input text
@@ -300,8 +300,8 @@ nouns <- function(tagged = NULL, text = "") {
 
 #' Return array of Verbs
 #'
-#' 결과/문장의 동사 리스트만 출력
-#' 새로운 문장이 주어지면 결과를 변경하고, 문장이 주어지지 않으면 이전 결과를 다시 사용
+#' - 결과/문장의 동사 리스트만 출력
+#' - 새로운 문장이 주어지면 결과를 변경하고, 문장이 주어지지 않으면 이전 결과를 다시 사용
 #'
 #' @param tagged BareunNLP tagger result
 #' @param text input text
@@ -338,7 +338,7 @@ verbs <- function(tagged = NULL, text = "") {
 
 #' Get List of Custom Dictionaries
 #'
-#' 사용자 사전의 목록 출력
+#' - 사용자 사전의 목록 출력
 #'
 #' @param tagged BareunNLP tagger result
 #' @return returns dict
@@ -354,7 +354,7 @@ dict_list <- function(tagged) {
 
 #' Get Custom Dictionary
 #'
-#' 지정된 사용자 사전 읽어오기
+#' - 지정된 사용자 사전 읽어오기
 #'
 #' @param tagged BareunNLP tagger result
 #' @param name name of custom dictionary
@@ -384,7 +384,7 @@ get_dict <- function(tagged, name) {
 
 #' Get Contents of Set
 #'
-#' 사용자 사전 세트별 내용 출력
+#' - 사용자 사전 세트별 내용 출력
 #'
 #' @param tagged BareunNLP tagger result
 #' @param set_name name of set (np, cp, caret)
@@ -401,7 +401,7 @@ get_set <- function(tagged, set_name) {
 
 #' Print All Contents of Custom Dictionary
 #'
-#' 사용자 사전 내용 모두 출력
+#' - 사용자 사전 내용 모두 출력
 #'
 #' @param tagged BareunNLP tagger result
 #' @return prints all contents of all sets
@@ -421,7 +421,7 @@ print_dict_all <- function(tagged) {
 
 #' Build A Dictionary
 #'
-#' 사용자 사전 한 세트 만들기
+#' - 사용자 사전 한 세트 만들기
 #'
 #' @param tagged BareunNLP tagger result
 #' @param domain domain name of custom dictionary
@@ -445,7 +445,7 @@ build_dict_set <- function(tagged, domain, name, dict_set) {
 
 #' Update Custom Dictionary
 #'
-#' 사용자 사전 만들고 업로드(저장)
+#' - 사용자 사전 만들고 업로드(저장)
 #'
 #' @param tagged BareunNLP tagger result
 #' @param domain domain name of custom dictionary
@@ -475,7 +475,7 @@ make_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
 
 #' Remove Custom Dictionary
 #'
-#' 사용자 사전(들)을 삭제
+#' - 사용자 사전(들)을 삭제
 #'
 #' @param tagged BareunNLP tagger result
 #' @param name name of custom dictionary
