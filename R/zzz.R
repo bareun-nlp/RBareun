@@ -1,6 +1,6 @@
 .onAttach <- function(libname, pkgName) {
     if (interactive()) {
-        packageStartupMessage("bareun ", packageVersion("bareun"),
+        packageStartupMessage("RBareun ", packageVersion("bareun"),
                               " using Bareun/1.7")
     }
 }
