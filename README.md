@@ -1,7 +1,7 @@
 # RBareun
 
-* R package for Bareun
-* About Bareun: https://license.baikal.ai/
+* R package for bareun
+* About bareun: https://bareun.ai/
 
 ## Install
 
@@ -128,4 +128,4 @@ $tag
 
 
 
-by [baikal.ai](https://baikal.ai)
+by [bareun.ai](https://bareun.ai)
