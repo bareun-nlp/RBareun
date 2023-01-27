@@ -1,7 +1,6 @@
 # package bareun: Bareun grpc client
 
 library(curl)
-library(grpc)
 library(RProtoBuf)
 
 tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
@@ -38,7 +37,6 @@ tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
 #' @return returns tagged object
 #' @examples
 #' tagged <- tagger("결과를 문자열로 바꾼다.")
-#' @importFrom grpc read_services grpc_client
 #' @importFrom RProtoBuf P
 #' @importFrom curl nslookup
 #' @export
