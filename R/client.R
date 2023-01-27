@@ -4,7 +4,6 @@
 #' @param channel what to connect to
 #' @return client handle
 #' @importFrom RProtoBuf P serialize read new
-#' @export
 grpc_client <- function(impl, channel) {
   
   

@@ -7,7 +7,6 @@ fetch <- function(server, method, requestArg, metadata) {
 
 #' Check grpc version
 #' @return version string and what g stands for
-#' @export
 grpc_version <- function() {
     .Call('_grpc_grpc_version', PACKAGE = 'grpc')
 }

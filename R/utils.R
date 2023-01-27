@@ -2,7 +2,6 @@
 #'
 #' You may want to override this with custom functions, eg registering the gRPC service in Hashicorp's consul.io or similar after \code{server_start} etc.
 #' @return \code{list}
-#' @export
 #' @importFrom futile.logger flog.trace flog.debug flog.info
 grpc_default_hooks <- function() {
   list(
