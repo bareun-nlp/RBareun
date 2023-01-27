@@ -1,10 +1,9 @@
 Installation Guide
 ---
 
-## 1. Linux (Ubuntu 18.0 이상)
+## 1. Linux (Ubuntu)
 
 - Pre-requisites:
-
 ```
 sudo apt update && sudo apt -y upgrade
 sudo apt install -y build-essential autoconf libtool pkg-config git
@@ -43,6 +42,12 @@ make -j4
 sudo make install
 popd
 ```
+- env 설정
+
+```
+export PKG_CONFIG_PATH=~/.local/lib/pkgconfig
+```
+
 
 ## 2. MacOS 
 
@@ -84,13 +89,19 @@ make -j4
 make install
 popd
 ```
+- env 설정
+
+```
+export PKG_CONFIG_PATH=~/.local/lib/pkgconfig:/opt/homebrew/lib/pkgconfig:/opt/homebrew/Cellar/openssl@1.1/1.1.1s/lib/pkgconfig
+```
 
 ## 3. 공통: R에서 설치
 
 ```
 install.packagas('devtools')
+install.packages('openssl')
+install.packages('Rcpp')
 install.packages('RProtoBuf')
-devtools::install_github('nfultz/grpc')
 devtools::install_github("bareun-nlp/RBareun")
 ```
 
