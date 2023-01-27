@@ -1,7 +1,7 @@
 Installation Guide
 ---
 
-## 1. Linux (Ubuntu 18.0 이상)
+## 1. Linux (Ubuntu)
 
 - Pre-requisites:
 
@@ -90,7 +90,6 @@ popd
 ```
 install.packagas('devtools')
 install.packages('RProtoBuf')
-devtools::install_github('nfultz/grpc')
 devtools::install_github("bareun-nlp/RBareun")
 ```
 
