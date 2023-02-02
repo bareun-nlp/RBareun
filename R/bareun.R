@@ -11,21 +11,21 @@ tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
                 "VA", "VCN", "VCP", "VV", "VX",
                 "XPN", "XR", "XSA", "XSN", "XSV", "_SP_", "PAD")
 
-api_key <- ""
+api_key <- list(key = "")
 
 #' Set api-key
 #'
 #' @param key api-key
 #' @export
 set_key <- function(key) {
-  api_key <<- key
+  api_key$key <- key
 }
 
 #' Print api-key
 #'
 #' @export
 print_key <- function() {
-  api_key
+  api_key$key
 }
 
 .get_client <- function(host, proto) {
