@@ -13,8 +13,19 @@ tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
 
 api_key <- ""
 
+#' Set api-key
+#'
+#' @param key api-key
+#' @export
 set_key <- function(key) {
   api_key <<- key
+}
+
+#' Print api-key
+#'
+#' @export
+print_key <- function() {
+  api_key
 }
 
 .get_client <- function(host, proto) {
