@@ -19,9 +19,13 @@ tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
   paste("api-key:", apikey, sep = " ")
 }
 
-.analyze_text <- function(text, host, proto, domain, apikey) {
+.analyze_text <- function(text, host, proto, domain, apikey, bareun) {
   client <- .get_client(host, proto)
-  doc <- new(P("bareun.Document", file = proto))
+  if (bareun) {
+    doc <- new(P("bareun.Document", file = proto))
+  } else {
+    doc <- new(P("baikal.language.Document", file = proto))
+  }
   doc$content <- text
   doc$language <- "ko_KR"
   example <- client$AnalyzeSyntax$build(document = doc,
@@ -49,22 +53,35 @@ tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
 tagger <- function(text = "",
     apikey = "",
     server = "nlp.bareun.ai", port = 5656,
-    domain = "", local = FALSE) {
+    domain = "", local = FALSE, bareun = TRUE) {
   host <- paste(nslookup(server), ":", as.character(port), sep = "")
   if (local) {
-    lang_proto <- "protos/language_service.proto"
-    dict_proto <- "protos/custom_dict.proto"
+    if (bareun) {
+      lang_proto <- "protos/language_service.proto"
+      dict_proto <- "protos/custom_dict.proto"
+    } else {
+      lang_proto <- "protos/baikal/language_service.proto"
+      dict_proto <- "protos/baikal/custom_dict.proto"
+    }
   } else {
-    lang_proto <- system.file("protos/language_service.proto",
-      package = "bareun")
-    dict_proto <- system.file("protos/custom_dict.proto",
-      package = "bareun")
+    if (bareun) {
+      lang_proto <- system.file("protos/language_service.proto",
+        package = "bareun")
+      dict_proto <- system.file("protos/custom_dict.proto",
+        package = "bareun")
+    } else {
+      lang_proto <- system.file("protos/baikal/language_service.proto",
+        package = "bareun")
+      dict_proto <- system.file("protos/baikal/custom_dict.proto",
+        package = "bareun")
+    }
   }
   custom_domain <- domain
   response <- NULL
   dict <- NULL
   if (text != "") {
-    response <- .analyze_text(text, host, lang_proto, custom_domain, apikey)
+    response <- .analyze_text(text, host, lang_proto, custom_domain,
+      apikey, bareun)
   }
   tagged <- list(text = text,
     result = response,
@@ -73,7 +90,8 @@ tagger <- function(text = "",
     host = host,
     apikey = apikey,
     lang_proto = lang_proto,
-    dict_proto = dict_proto)
+    dict_proto = dict_proto,
+    bareun = bareun)
   class(tagged) <- "tagged"
   tagged
 }
@@ -142,8 +160,8 @@ print_as_json <- function(tagged) {
       res <- tagged$result
     } else {
       # 새로운 문자열이면 실행 결과를 저장
-      res <- .analyze_text(text, tagged$host,
-        tagged$lang_proto, tagged$domain, tagged$apikey)
+      res <- .analyze_text(text, tagged$host, tagged$lang_proto,
+        tagged$domain, tagged$apikey, tagged$bareun)
       t <- tagged
       t$text <- text
       t$result <- res
@@ -440,10 +458,18 @@ print_dict_all <- function(tagged) {
 #' @return returns DictSet
 #' @export
 build_dict_set <- function(tagged, domain, name, dict_set) {
-  ds <- new(P("bareun.DictSet", file = tagged$dict_proto))
+  if (tagged$bareun) {
+    ds <- new(P("bareun.DictSet", file = tagged$dict_proto))
+  } else {
+    ds <- new(P("baikal.language.DictSet", file = tagged$dict_proto))
+  }
   ds$name <- paste(domain, "-", name, sep = "")
   ds$type <- 1 # common.DictType.WORD_LIST
-  dsentry <- P("bareun.DictSet.ItemsEntry", file = tagged$dict_proto)
+  if (tagged$bareun) {
+    dsentry <- P("bareun.DictSet.ItemsEntry", file = tagged$dict_proto)
+  } else {
+    dsentry <- P("baikal.language.DictSet.ItemsEntry", file = tagged$dict_proto)
+  }
   for (v in dict_set) {
     de <- new(dsentry)
     de$key <- v
@@ -467,8 +493,13 @@ build_dict_set <- function(tagged, domain, name, dict_set) {
 #' @return print result
 #' @export
 make_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
-  dict <- new(P("bareun.CustomDictionary",
-    file = tagged$dict_proto))
+  if (tagged$bareun) {
+    dict <- new(P("bareun.CustomDictionary",
+      file = tagged$dict_proto))
+  } else {
+    dict <- new(P("baikal.language.CustomDictionary",
+      file = tagged$dict_proto))
+  }
   dict$domain_name <- domain
   dict$np_set <- build_dict_set(tagged, domain, "np-set", nps)
   dict$cp_set <- build_dict_set(tagged, domain, "cp-set", cps)
