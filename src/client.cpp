@@ -85,7 +85,7 @@ RawVector fetch(CharacterVector server, CharacterVector method, RawVector reques
   grpc_call_error error;
   grpc_event event;
   grpc_slice details;
-  int was_cancelled = 2;
+  //int was_cancelled = 2;
   
   
   
