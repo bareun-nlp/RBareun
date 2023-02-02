@@ -11,35 +11,22 @@ tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
                 "VA", "VCN", "VCP", "VV", "VX",
                 "XPN", "XR", "XSA", "XSN", "XSV", "_SP_", "PAD")
 
-api_key <- list(key = "")
-
-#' Set api-key
-#'
-#' @param key api-key
-#' @export
-set_key <- function(key) {
-  api_key$key <- key
-}
-
-#' Print api-key
-#'
-#' @export
-print_key <- function() {
-  api_key$key
-}
-
 .get_client <- function(host, proto) {
-    grpc_client(read_services(proto), host)
+  grpc_client(read_services(proto), host)
 }
 
-.analyze_text <- function(text, host, proto, domain) {
+.get_metadata <- function(apikey) {
+  paste("api-key:", apikey, sep = " ")
+}
+
+.analyze_text <- function(text, host, proto, domain, apikey) {
   client <- .get_client(host, proto)
   doc <- new(P("baikal.language.Document", file = proto))
   doc$content <- text
   doc$language <- "ko_KR"
   example <- client$AnalyzeSyntax$build(document = doc,
     encoding_type = 1, auto_split_sentence = 0, custom_domain = domain)
-  metadata <- paste("api-key:", api_key, sep = " ")
+  metadata <- .get_metadata(apikey)
   client$AnalyzeSyntax$call(example, metadata)
 }
 
@@ -48,6 +35,7 @@ print_key <- function() {
 #' - Bareun grpc 서버를 호출하여 입력 문장(들)의 분석 결과를 가져 온다
 #'
 #' @param text string - subject sentences splitted by newlines(\\n)
+#' @param apikey string - Bareun user's API KEY
 #' @param server string - Bareun grpc server address
 #' @param port number - Bareun grpc server port
 #' @param domain string - custom domain (custom dictionary)
@@ -59,7 +47,9 @@ print_key <- function() {
 #' @importFrom curl nslookup
 #' @export
 tagger <- function(text = "",
-  server = "nlp.baikal.ai", port = 5656, domain = "", local = FALSE) {
+    apikey = "",
+    server = "nlp.baikal.ai", port = 5656,
+    domain = "", local = FALSE) {
   host <- paste(nslookup(server), ":", as.character(port), sep = "")
   if (local) {
     lang_proto <- "protos/language_service.proto"
@@ -74,13 +64,14 @@ tagger <- function(text = "",
   response <- NULL
   dict <- NULL
   if (text != "") {
-    response <- .analyze_text(text, host, lang_proto, custom_domain)
+    response <- .analyze_text(text, host, lang_proto, custom_domain, apikey)
   }
   tagged <- list(text = text,
     result = response,
     domain = custom_domain,
     custom_dict = dict,
     host = host,
+    apikey = apikey,
     lang_proto = lang_proto,
     dict_proto = dict_proto)
   class(tagged) <- "tagged"
@@ -151,7 +142,8 @@ print_as_json <- function(tagged) {
       res <- tagged$result
     } else {
       # 새로운 문자열이면 실행 결과를 저장
-      res <- .analyze_text(text, tagged$host, tagged$lang_proto, tagged$domain)
+      res <- .analyze_text(text, tagged$host,
+        tagged$lang_proto, tagged$domain, tagged$apikey)
       t <- tagged
       t$text <- text
       t$result <- res
@@ -346,10 +338,11 @@ verbs <- function(tagged = NULL, text = "") {
 
 # For Custom dicts
 
-.get_dic_list <- function(host, proto) {
+.get_dic_list <- function(host, proto, apikey) {
     cli <- .get_client(host, proto)
     ops <- cli$GetCustomDictionaryList$build()
-    cli$GetCustomDictionaryList$call(ops)
+    metadata <- .get_metadata(apikey)
+    cli$GetCustomDictionaryList$call(ops, metadata)
 }
 
 #' Get List of Custom Dictionaries
@@ -360,7 +353,7 @@ verbs <- function(tagged = NULL, text = "") {
 #' @return returns dict
 #' @export
 dict_list <- function(tagged) {
-  dl <- .get_dic_list(tagged$host, tagged$dict_proto)
+  dl <- .get_dic_list(tagged$host, tagged$dict_proto, tagged$apikey)
   out <- c()
   for (d in as.list(dl)$domain_dicts) {
     out <- c(out, as.list(d)$domain_name)
@@ -379,7 +372,8 @@ dict_list <- function(tagged) {
 get_dict <- function(tagged, name) {
   cli <- .get_client(tagged$host, tagged$dict_proto)
   ops <- cli$GetCustomDictionary$build(domain_name = name)
-  dict <- cli$GetCustomDictionary$call(ops)
+  metadata <- .get_metadata(tagged$apikey)
+  dict <- cli$GetCustomDictionary$call(ops, metadata)
   t <- tagged
   t$custom_dict <- dict
   t$domain <- name
@@ -483,7 +477,8 @@ make_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
   dict$va_set <- build_dict_set(tagged, domain, "va-set", vas)
   cli <- .get_client(tagged$host, tagged$dict_proto)
   ops <- cli$UpdateCustomDictionary$build(domain_name = domain, dict = dict)
-  res <- cli$UpdateCustomDictionary$call(ops)
+  metadata <- .get_metadata(tagged$apikey)
+  res <- cli$UpdateCustomDictionary$call(ops, metadata)
   if (res$updated_domain_name == domain) {
     print(paste(domain, ": 업데이트 성공"))
   }
@@ -500,7 +495,8 @@ make_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
 remove_custom_dict <- function(tagged, names) {
   cli <- .get_client(tagged$host, tagged$dict_proto)
   ops <- cli$RemoveCustomDictionaries$build(domain_names = names)
-  res <- cli$RemoveCustomDictionaries$call(ops)
+  metadata <- .get_metadata(tagged$apikey)
+  res <- cli$RemoveCustomDictionaries$call(ops, metadata)
   for (r in as.list(res)$deleted_domain_names) {
     print(c(r$key, r$value))
   }
