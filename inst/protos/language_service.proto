@@ -1,14 +1,15 @@
-// Copyright 2019-2020 BAIKAL AI Inc.
+// Copyright 2019-2023 BAIKAL AI Inc.
 
 syntax = "proto3";
 
-package baikal.language;
+package bareun;
 
 //import "google/api/annotations.proto";
 //import "google/api/client.proto";
 //import "google/api/field_behavior.proto";
 
-//option go_package = "baikal.ai/proto/baikal/language";
+//option go_package = "bareun.ai/proto/bareun";
+//option java_package = "ai.bareun.protos";
 //option java_multiple_files = true;
 //option java_outer_classname = "LanguageServiceProto";
 
@@ -18,7 +19,7 @@ service LanguageService {
   // 텍스트의 형태를 분석하고, 문장 경계를 파악하여 토큰 단위로 잘라낸다.
   rpc AnalyzeSyntax (AnalyzeSyntaxRequest) returns (AnalyzeSyntaxResponse) {
     //option (google.api.http) = {
-    //  post: "/baikal-nlp/api/v1/analyze"
+    // post: "/bareun/api/v1/analyze"
     //  body: "*"
     //};
   }
@@ -27,7 +28,7 @@ service LanguageService {
   // 복수의 문장에 대한 순서를 그대로 반환하고 문장을 분할하지 않는다.
   rpc AnalyzeSyntaxList (AnalyzeSyntaxListRequest) returns (AnalyzeSyntaxListResponse) {
       //option (google.api.http) = {
-      //  post: "/baikal-nlp/api/v1/analyze-list"
+      //  post: "/bareun/api/v1/analyze-list"
       //  body: "*"
       //};
   }
@@ -35,7 +36,7 @@ service LanguageService {
   // 한국어의 특성에 따라서 텍스트를 분절 단뤼로 구분해 낸다.
   rpc Tokenize (TokenizeRequest) returns (TokenizeResponse) {
     //option (google.api.http) = {
-    //  post: "/baikal-nlp/api/v1/tokenize"
+    //  post: "/bareun/api/v1/tokenize"
     //  body: "*"
     //};
   }
@@ -63,7 +64,7 @@ message Sentence {
   // 어절단위로 쪼개는 것은
   repeated Token tokens = 2;
 
-  // 띄어뜨기 등의 오류를 수정한 결과물
+  // 띄어쓰기 등의 오류를 수정한 결과물
   string refined = 3;
 }
 
@@ -350,12 +351,20 @@ message SegmentToken {
   string tagged = 5;
 }
 
+message SegmentSentence {
+  // The token text.
+  TextSpan text = 1;
+  // 어절 내부의 형태소 분리
+  repeated SegmentToken tokens = 2;
+
+}
 
 // Tokenize 요청 토크나이즈에 대한 요청
 message TokenizeResponse {
-  // 분절 분리된 문장들의 배열
-  repeated SegmentToken tokens = 1;
   
+  // 분절 분리된 문장들의 배열
+  repeated SegmentSentence sentences = 1;
+
   // ISO 문자 코드
   string language = 3;
 }
