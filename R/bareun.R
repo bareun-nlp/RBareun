@@ -11,6 +11,12 @@ tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
                 "VA", "VCN", "VCP", "VV", "VX",
                 "XPN", "XR", "XSA", "XSN", "XSV", "_SP_", "PAD")
 
+api_key <- ""
+
+set_key <- function(key) {
+  api_key <<- key
+}
+
 .get_client <- function(host, proto) {
     grpc_client(read_services(proto), host)
 }
@@ -22,7 +28,8 @@ tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
   doc$language <- "ko_KR"
   example <- client$AnalyzeSyntax$build(document = doc,
     encoding_type = 1, auto_split_sentence = 0, custom_domain = domain)
-  client$AnalyzeSyntax$call(example)
+  metadata <- paste("api-key:", api_key, sep = " ")
+  client$AnalyzeSyntax$call(example, metadata)
 }
 
 #' Call Bareun server to read postag result message for the sentences
