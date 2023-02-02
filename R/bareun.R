@@ -21,7 +21,7 @@ tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
 
 .analyze_text <- function(text, host, proto, domain, apikey) {
   client <- .get_client(host, proto)
-  doc <- new(P("baikal.language.Document", file = proto))
+  doc <- new(P("bareun.Document", file = proto))
   doc$content <- text
   doc$language <- "ko_KR"
   example <- client$AnalyzeSyntax$build(document = doc,
@@ -48,7 +48,7 @@ tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
 #' @export
 tagger <- function(text = "",
     apikey = "",
-    server = "nlp.baikal.ai", port = 5656,
+    server = "nlp.bareun.ai", port = 5656,
     domain = "", local = FALSE) {
   host <- paste(nslookup(server), ":", as.character(port), sep = "")
   if (local) {
@@ -440,10 +440,10 @@ print_dict_all <- function(tagged) {
 #' @return returns DictSet
 #' @export
 build_dict_set <- function(tagged, domain, name, dict_set) {
-  ds <- new(P("baikal.language.DictSet", file = tagged$dict_proto))
+  ds <- new(P("bareun.DictSet", file = tagged$dict_proto))
   ds$name <- paste(domain, "-", name, sep = "")
   ds$type <- 1 # common.DictType.WORD_LIST
-  dsentry <- P("baikal.language.DictSet.ItemsEntry", file = tagged$dict_proto)
+  dsentry <- P("bareun.DictSet.ItemsEntry", file = tagged$dict_proto)
   for (v in dict_set) {
     de <- new(dsentry)
     de$key <- v
@@ -467,7 +467,7 @@ build_dict_set <- function(tagged, domain, name, dict_set) {
 #' @return print result
 #' @export
 make_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
-  dict <- new(P("baikal.language.CustomDictionary",
+  dict <- new(P("bareun.CustomDictionary",
     file = tagged$dict_proto))
   dict$domain_name <- domain
   dict$np_set <- build_dict_set(tagged, domain, "np-set", nps)
