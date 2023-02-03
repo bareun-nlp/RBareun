@@ -11,6 +11,7 @@ tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
                 "VA", "VCN", "VCP", "VV", "VX",
                 "XPN", "XR", "XSA", "XSN", "XSV", "_SP_", "PAD")
 
+
 .get_client <- function(host, proto) {
   grpc_client(read_services(proto), host)
 }
@@ -32,6 +33,13 @@ tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
     encoding_type = 1, auto_split_sentence = 0, custom_domain = domain)
   metadata <- .get_metadata(apikey)
   client$AnalyzeSyntax$call(example, metadata)
+}
+
+#' grpc cllient
+#'
+#' @export
+get_grpc_client <- function(host, proto) {
+  .get_client(host, proto)
 }
 
 #' Call Bareun server to read postag result message for the sentences
