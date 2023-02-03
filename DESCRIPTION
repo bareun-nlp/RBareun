@@ -1,11 +1,10 @@
 Package: bareun
 Title: R interface for Bareun
-Version: 0.9.0
+Version: 1.0.0
 Authors@R: 
     person("hunbL", "", , "hunbl@baikal.ai", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-0951-2785"))
-Description: R 언어에서 Bareun을 사용할 수 있습니다.
-License: `use_mit_license()`
+Description: R언어에서 Bareun을 사용합니다.
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.2
