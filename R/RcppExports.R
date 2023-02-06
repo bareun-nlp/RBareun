@@ -2,12 +2,16 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 fetch <- function(server, method, requestArg, metadata) {
-    .Call('_bareun_fetch', PACKAGE = 'bareun', server, method, requestArg, metadata)
+    .Call('_grpc_fetch', PACKAGE = 'grpc', server, method, requestArg, metadata)
 }
 
-# Check grpc version
-# return version string and what g stands for
+#' Check grpc version
+#' @return version string and what g stands for
 grpc_version <- function() {
-    .Call('_bareun_grpc_version', PACKAGE = 'bareun')
+    .Call('_grpc_grpc_version', PACKAGE = 'grpc')
+}
+
+run <- function(target, hoststring, hooks) {
+    .Call('_grpc_run', PACKAGE = 'grpc', target, hoststring, hooks)
 }
 
