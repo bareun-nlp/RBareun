@@ -110,7 +110,7 @@ $tag
 > vv <- c("카톡하다", "인스타하다")
 > va <- c("혜자스럽다", "창렬하다")
 > make_custom_dict(t, "sample", np, cp, caret, vv, va)
-[1] "사용자 : 업데이트 성공"
+[1] "sample : 업데이트 성공"
 ```
 - 사전 기능 테스트
 
