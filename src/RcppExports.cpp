@@ -5,14 +5,9 @@
 
 using namespace Rcpp;
 
-#ifdef RCPP_USE_GLOBAL_ROSTREAM
-Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
-Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
-#endif
-
 // fetch
 RawVector fetch(CharacterVector server, CharacterVector method, RawVector requestArg, CharacterVector metadata);
-RcppExport SEXP _bareun_fetch(SEXP serverSEXP, SEXP methodSEXP, SEXP requestArgSEXP, SEXP metadataSEXP) {
+RcppExport SEXP _grpc_fetch(SEXP serverSEXP, SEXP methodSEXP, SEXP requestArgSEXP, SEXP metadataSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -26,7 +21,7 @@ END_RCPP
 }
 // grpc_version
 CharacterVector grpc_version();
-RcppExport SEXP _bareun_grpc_version() {
+RcppExport SEXP _grpc_grpc_version() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -34,14 +29,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-
-static const R_CallMethodDef CallEntries[] = {
-    {"_bareun_fetch", (DL_FUNC) &_bareun_fetch, 4},
-    {"_bareun_grpc_version", (DL_FUNC) &_bareun_grpc_version, 0},
-    {NULL, NULL, 0}
-};
-
-RcppExport void R_init_bareun(DllInfo *dll) {
-    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
-    R_useDynamicSymbols(dll, FALSE);
+// run
+List run(List target, CharacterVector hoststring, List hooks);
+RcppExport SEXP _grpc_run(SEXP targetSEXP, SEXP hoststringSEXP, SEXP hooksSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type target(targetSEXP);
+    Rcpp::traits::input_parameter< CharacterVector >::type hoststring(hoststringSEXP);
+    Rcpp::traits::input_parameter< List >::type hooks(hooksSEXP);
+    rcpp_result_gen = Rcpp::wrap(run(target, hoststring, hooks));
+    return rcpp_result_gen;
+END_RCPP
 }
