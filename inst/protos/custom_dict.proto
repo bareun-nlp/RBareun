@@ -14,9 +14,31 @@ option java_outer_classname = "CustomDictionaryServiceProto";
 //import "google/protobuf/empty.proto";
 //import "google/api/annotations.proto";
 
+// 사전의 종류
+enum DictType {
+  // 기본 배포사전에 사용되는 포맷
+  // 전송시에는 쓰이지 않는다.
+  TOKEN_INDEX = 0;
+  // 고유명사나 복합명사를 표기할 때 사용한다.
+  WORD_LIST = 1;
+  // # 전송시에만 사용하고 실제로는 쓰이지 추론시에는 쓰이지 않는다.
+  WORD_LIST_COMPOUND = 2;
+}
+
+// 메모리 상에서 복합명사나 고유명사를 처리하기 위해서 쓰는 사전
+// 사전이 map으로 쓰이는 이유는 메모리 상에서 빠르게 사전 데이터의 존재여부를 점검하기
+// 위한 목적이다.
+message DictSet {
+  map<string, int32> items = 1;
+  DictType type = 2;
+  string name = 10;
+}
+
+message Empty {}
+
 service CustomDictionaryService {
   // 전체 목록을 다 가져오기
-  rpc GetCustomDictionaryList (google.protobuf.Empty) returns (GetCustomDictionaryListResponse) {
+  rpc GetCustomDictionaryList (Empty) returns (GetCustomDictionaryListResponse) {
     //option (google.api.http) = {
     //  get: "/bareun/api/v1/customdict"
     //  body: "*"
