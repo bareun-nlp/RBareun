@@ -16,7 +16,7 @@ tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
   grpc_client(read_services(proto), host)
 }
 
-.get_metadata <- function(apikey) {
+.meta <- function(apikey) {
   c("api-key", apikey)
 }
 
@@ -31,8 +31,7 @@ tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
   doc$language <- "ko_KR"
   example <- client$AnalyzeSyntax$build(document = doc,
     encoding_type = 1, auto_split_sentence = 0, custom_domain = domain)
-  metadata <- .get_metadata(apikey)
-  client$AnalyzeSyntax$call(example, metadata)
+  client$AnalyzeSyntax$call(example, metadata = .meta(apikey))
 }
 
 #' grpc cllient
@@ -367,8 +366,7 @@ verbs <- function(tagged = NULL, text = "") {
 .get_dic_list <- function(host, proto, apikey) {
     cli <- .get_client(host, proto)
     ops <- cli$GetCustomDictionaryList$build()
-    metadata <- .get_metadata(apikey)
-    cli$GetCustomDictionaryList$call(ops, metadata)
+    cli$GetCustomDictionaryList$call(ops, metadata = .meta(apikey))
 }
 
 #' Get List of Custom Dictionaries
@@ -398,8 +396,7 @@ dict_list <- function(tagged) {
 get_dict <- function(tagged, name) {
   cli <- .get_client(tagged$host, tagged$dict_proto)
   ops <- cli$GetCustomDictionary$build(domain_name = name)
-  metadata <- .get_metadata(tagged$apikey)
-  dict <- cli$GetCustomDictionary$call(ops, metadata)
+  dict <- cli$GetCustomDictionary$call(ops, metadata = .meta(tagged$apikey))
   t <- tagged
   t$custom_dict <- dict
   t$domain <- name
@@ -516,8 +513,7 @@ make_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
   dict$va_set <- build_dict_set(tagged, domain, "va-set", vas)
   cli <- .get_client(tagged$host, tagged$dict_proto)
   ops <- cli$UpdateCustomDictionary$build(domain_name = domain, dict = dict)
-  metadata <- .get_metadata(tagged$apikey)
-  res <- cli$UpdateCustomDictionary$call(ops, metadata)
+  res <- cli$UpdateCustomDictionary$call(ops, metadata = .meta(tagged$apikey))
   if (res$updated_domain_name == domain) {
     print(paste(domain, ": 업데이트 성공"))
   }
@@ -534,8 +530,7 @@ make_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
 remove_custom_dict <- function(tagged, names) {
   cli <- .get_client(tagged$host, tagged$dict_proto)
   ops <- cli$RemoveCustomDictionaries$build(domain_names = names)
-  metadata <- .get_metadata(tagged$apikey)
-  res <- cli$RemoveCustomDictionaries$call(ops, metadata)
+  res <- cli$RemoveCustomDictionaries$call(ops, metadata = .meta(tagged$apikey))
   for (r in as.list(res)$deleted_domain_names) {
     print(c(r$key, r$value))
   }

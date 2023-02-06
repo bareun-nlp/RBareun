@@ -44,7 +44,8 @@ library(bareun)
 ```
 > library(RProtoBuf)
 > library(bareun)
-> t <- tagger("문장을 입력합니다.\n여러 문장을 넣습니다.")
+> api_key <- "YOUR_API_KEY"
+> t <- tagger("문장을 입력합니다.\n여러 문장을 넣습니다.", apikey=api_key)
 ```
 - 형태소 분석을 매트릭스로 출력
 ```
@@ -98,12 +99,6 @@ $tag
 
 [[2]]
 [1] "넣"
-```
-- 문장만 입력할 수도 있습니다.
-```
-> pos(, "문장만 입력하기")
-[[1]]
-[1] "문장/NNG"  "만/JX"     "입력하/VV" "기/ETN"
 ```
 
 ## Examples / 사용자 사전

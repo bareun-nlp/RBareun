@@ -6,14 +6,18 @@
 \usage{
 tagger(
   text = "",
-  server = "nlp.baikal.ai",
+  apikey = "",
+  server = "nlp.bareun.ai",
   port = 5656,
   domain = "",
-  local = FALSE
+  local = FALSE,
+  bareun = TRUE
 )
 }
 \arguments{
 \item{text}{string - subject sentences splitted by newlines(\\n)}
+
+\item{apikey}{string - Bareun user's API KEY}
 
 \item{server}{string - Bareun grpc server address}
 
