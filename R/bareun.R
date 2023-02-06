@@ -17,7 +17,7 @@ tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
 }
 
 .get_metadata <- function(apikey) {
-  paste("api-key:", apikey, sep = " ")
+  c("api-key", apikey)
 }
 
 .analyze_text <- function(text, host, proto, domain, apikey, bareun) {
