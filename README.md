@@ -12,6 +12,7 @@
 library(devtools)  
 devtools::install_github("bareun-nlp/RBareun")  
 ```
+- 위 과정에서 오류가 발생할 경우, [INSTALL](https://github.com/bareun-nlp/RBareun/blob/main/INSTALL.md)의 PKG_CONFIG_PATH 설정을 확인해주세요.
 
 ## Usage
 
@@ -37,39 +38,33 @@ library(bareun)
 - build_dict_set: 새로운 세트 만들기
 - make_custom_dict: 사용자 사전 새로 만들고 등록
 - remove_custom_dict: 사용자 사전(들) 삭제
+- set_key: API-KEY 설정
+- get_key: API-KEY 보기
 
 ## Examples / 형태소 분석
 
 - 로드/호출
 ```
-> library(RProtoBuf)
-> library(bareun)
-> api_key <- "YOUR_API_KEY"
-> t <- tagger(apikey = api_key)
+> library(RProtoBuf)  
+> library(bareun)  
+> set_key("YOUR_API_KEY")  
+> t <- tagger()  
 ```
-- 형태소 분석을 매트릭스로 출력
+- 형태소 분석 출력
 ```
-> postag(t, "문장을 입력합니다.\n여러 문장을 넣습니다.", TRUE)
-[[1]]
-     [,1]     [,2]
-[1,] "문장"   "NNG"
-[2,] "을"     "JKO"
-[3,] "입력하" "VV"
-[4,] "ㅂ니다" "EF"
-[5,] "."      "SF"
+> text <- "문장을 입력합니다.\n여러 문장을 넣습니다."  
+> pos(t, text)
 
+[[1]]
+[1] "문장/NNG"  "을/JKO"    "입력하/VV" "ㅂ니다/EF" "./SF"
+  
 [[2]]
-     [,1]     [,2]
-[1,] "여러"   "MMN"
-[2,] "문장"   "NNG"
-[3,] "을"     "JKO"
-[4,] "넣"     "VV"
-[5,] "습니다" "EF"
-[6,] "."      "SF"
+[1] "여러/MMN"  "문장/NNG"  "을/JKO"    "넣/VV"     "습니다/EF" "./SF"
 ```
 - 1번째 문장의 4번째 형태소 출력
 ```
-> postag(t)[[1]][[4]]
+> postag(t, text)[[1]][[4]]
+
 $morpheme
 [1] "ㅂ니다"
 
@@ -79,6 +74,7 @@ $tag
 - 어절, 명사, 동사 출력(해당 없는 경우 빈 문자열 배열 반환)
 ```
 > morphs(t)
+
 [[1]]
 [1] "문장"   "을"     "입력하" "ㅂ니다" "."
 
@@ -86,6 +82,7 @@ $tag
 [1] "여러"   "문장"   "을"     "넣"     "습니다" "."
 
 > nouns(t)
+
 [[1]]
 [1] "문장"
 
@@ -93,6 +90,7 @@ $tag
 [1] "문장"
 
 > verbs(t)
+
 [[1]]
 [1] "입력하"
 
@@ -104,12 +102,13 @@ $tag
 
 - 만들기 & 등록하기
 ```
-> np <- c("청하", "트와이스", "티키타카", "TIKITAKA", "오마이걸")
-> cp <- c("자유여행", "방역당국", "코로나19", "주술부", "완전주의")
-> caret <- c("주어^역할", "주어^술어^구조", "하급^공무원")
-> vv <- c("카톡하다", "인스타하다")
-> va <- c("혜자스럽다", "창렬하다")
+> np <- c("청하", "트와이스", "티키타카", "TIKITAKA", "오마이걸")  
+> cp <- c("자유여행", "방역당국", "코로나19", "주술부", "완전주의")  
+> caret <- c("주어^역할", "주어^술어^구조", "하급^공무원")  
+> vv <- c("카톡하다", "인스타하다")  
+> va <- c("혜자스럽다", "창렬하다")  
 > make_custom_dict(t, "sample", np, cp, caret, vv, va)
+
 [1] "sample : 업데이트 성공"
 ```
 - 사전 기능 테스트
