@@ -14,7 +14,6 @@ devtools::install_github("bareun-nlp/RBareun")
 ```
 - 위 과정에서 오류가 발생할 경우, [INSTALL](https://github.com/bareun-nlp/RBareun/blob/main/INSTALL.md)의 PKG_CONFIG_PATH 설정을 확인해주세요.
 
-```
 ## Usage
 
 - 패키지 사용 방법
