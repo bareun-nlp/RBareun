@@ -38,6 +38,8 @@ library(bareun)
 - build_dict_set: 새로운 세트 만들기
 - make_custom_dict: 사용자 사전 새로 만들고 등록
 - remove_custom_dict: 사용자 사전(들) 삭제
+- set_key: API-KEY 설정
+- get_key: API-KEY 보기
 
 ## Examples / 형태소 분석
 
