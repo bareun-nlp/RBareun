@@ -11,6 +11,21 @@ tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
                 "VA", "VCN", "VCP", "VV", "VX",
                 "XPN", "XR", "XSA", "XSN", "XSV", "_SP_", "PAD")
 
+barenv <- new.env()
+
+#' save api key
+#'
+#' @export
+set_key <- function(apikey) {
+  barenv$apikey <- apikey
+}
+
+#' get api key
+#'
+#' @export
+get_key <- function() {
+  barenv$apikey
+}
 
 .get_client <- function(host, proto) {
   grpc_client(read_services(proto), host)
@@ -62,6 +77,9 @@ tagger <- function(text = "",
     server = "nlp.bareun.ai", port = 5656,
     domain = "", local = FALSE, bareun = TRUE) {
   host <- paste(nslookup(server), ":", as.character(port), sep = "")
+  if (apikey == "") {
+    apikey <- barenv$apikey
+  }
   if (local) {
     if (bareun) {
       lang_proto <- "protos/language_service.proto"
