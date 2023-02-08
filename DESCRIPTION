@@ -1,6 +1,6 @@
 Package: bareun
 Title: R interface for Bareun
-Version: 1.0.3
+Version: 1.0.4
 Authors@R: 
     person("hunbL", "", , "hunbl@baikal.ai", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-0951-2785"))
