@@ -2,6 +2,7 @@
 
 library(curl)
 library(RProtoBuf)
+library(grpc)
 
 tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
                 "JC", "JKB", "JKC", "JKG", "JKO", "JKQ", "JKS", "JKV", "JX",
