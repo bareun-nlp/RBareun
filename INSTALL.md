@@ -102,6 +102,8 @@ install.packagas('devtools')
 install.packages('openssl')
 install.packages('Rcpp')
 install.packages('RProtoBuf')
+install.packages('curl')
+install.packages('httr')
 devtools::install_github("bareun-nlp/RBareun")
 ```
 

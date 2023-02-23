@@ -9,9 +9,13 @@
 ➡️ [INSTALL](https://github.com/bareun-nlp/RBareun/blob/main/INSTALL.md) 내용 참고 
 - gRPC 설치후 다음과 같이 설치
 ```
-library(devtools)
-devtools::install_github("bareun-nlp/grpc")    
-devtools::install_github("bareun-nlp/RBareun@grpc-ex")  
+install.packagas('devtools')
+install.packages('openssl')
+install.packages('Rcpp')
+install.packages('RProtoBuf')
+install.packages('curl')
+install.packages('httr')
+devtools::install_github("bareun-nlp/RBareun")
 ```
 - install_github 과정에서 오류가 발생할 경우, [INSTALL](https://github.com/bareun-nlp/RBareun/blob/main/INSTALL.md)의 PKG_CONFIG_PATH 설정 확인
 
@@ -20,7 +24,6 @@ devtools::install_github("bareun-nlp/RBareun@grpc-ex")
 - 패키지 사용 방법
 ```
 library(RProtoBuf)
-library(grpc)
 library(bareun)
 ```
 
@@ -42,15 +45,17 @@ library(bareun)
 - remove_custom_dict: 사용자 사전(들) 삭제
 - set_key: API-KEY 설정
 - get_key: API-KEY 보기
+- set_server: 서버 설정
 
 ## Examples / 형태소 분석
 
 - 로드/호출
 ```
-> library(RProtoBuf)  
-> library(bareun)  
-> set_key("YOUR_API_KEY")  
-> t <- tagger()  
+library(RProtoBuf)  
+library(bareun)  
+set_key("YOUR_API_KEY")
+set_server("http://localhost:5757", api = "grpc") # api = grpc(default)/rest
+t <- tagger()  
 ```
 - 형태소 분석 출력
 ```
