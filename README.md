@@ -7,10 +7,11 @@
 
 - 설치에 앞서, gRPC C++ 라이브러리를 직접 컴파일 설치해야 합니다.
 ➡️ [INSTALL](https://github.com/bareun-nlp/RBareun/blob/main/INSTALL.md) 내용 참고 
-- gRPC 설치후 이 패키지 설치
+- gRPC 설치후 다음과 같이 설치
 ```
-library(devtools)  
-devtools::install_github("bareun-nlp/RBareun")  
+library(devtools)
+devtools::install_github("bareun-nlp/grpc")    
+devtools::install_github("bareun-nlp/RBareun@grpc-ex")  
 ```
 - install_github 과정에서 오류가 발생할 경우, [INSTALL](https://github.com/bareun-nlp/RBareun/blob/main/INSTALL.md)의 PKG_CONFIG_PATH 설정 확인
 
@@ -18,7 +19,8 @@ devtools::install_github("bareun-nlp/RBareun")
 
 - 패키지 사용 방법
 ```
-library(RProtoBuf)  
+library(RProtoBuf)
+library(grpc)
 library(bareun)
 ```
 
