@@ -12,7 +12,7 @@ tagger(
   domain = "",
   local = FALSE,
   bareun = TRUE,
-  api = "grpc"
+  api = ""
 )
 }
 \arguments{

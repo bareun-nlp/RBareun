@@ -69,11 +69,13 @@ get_server <- function() {
   client$AnalyzeSyntax$call(example, metadata = .meta(apikey))
 }
 
+#' @importFrom httr POST add_headers content
 .rest_analyze_text <- function(text, host, custom_domain, apikey) {
   url <- paste("http://", host, "/bareun/api/v1/analyze", sep = "")
   doc <- list(content = text, language = "ko_KR")
-  h <- add_headers("api-key", apikey)
-  r <- POST(url, body = doc, encode = "json", config = h)
+  js <- list(document = doc, encoding_type = 1)
+  r <- POST(url, config = add_headers("api-key" = apikey),
+        body = js, encode = "json")
   content(r)
 }
 
@@ -104,7 +106,7 @@ tagger <- function(text = "",
     apikey = "",
     server = "", port = 5656,
     domain = "", local = FALSE, bareun = TRUE,
-    api = "grpc") {
+    api = "") {
   # host
   if (server == "") {
     host <- get_server()$host
@@ -122,6 +124,8 @@ tagger <- function(text = "",
   custom_domain <- domain
   response <- NULL
   dict <- NULL
+  lang_proto <- ""
+  dict_proto <- ""
   if (text != "") {
     # grpc
     if (api == "grpc") {
@@ -159,6 +163,7 @@ tagger <- function(text = "",
     custom_dict = dict,
     host = host,
     apikey = apikey,
+    api = api,
     lang_proto = lang_proto,
     dict_proto = dict_proto,
     bareun = bareun)
@@ -230,14 +235,26 @@ print_as_json <- function(tagged) {
       res <- tagged$result
     } else {
       # 새로운 문자열이면 실행 결과를 저장
-      res <- .analyze_text(text, tagged$host, tagged$lang_proto,
-        tagged$domain, tagged$apikey, tagged$bareun)
+      if (tagged$api == "grpc") {
+        res <- .analyze_text(text, tagged$host, tagged$lang_proto,
+          tagged$domain, tagged$apikey, tagged$bareun)
+      } else {
+        res <- .rest_analyze_text(text, tagged$host, tagged$domain,
+          tagged$apikey)
+      }
       t <- tagged
       t$text <- text
       t$result <- res
       eval.parent(substitute(tagged <- t))
     }
   }
+  res
+}
+
+#' @export
+analyze_text <- function(tagged, text) {
+  res <- .rest_analyze_text(text, tagged$host, tagged$domain,
+          tagged$apikey)
   res
 }
 
