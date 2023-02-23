@@ -2,7 +2,7 @@
 
 library(curl)
 library(RProtoBuf)
-library(grpc)
+library(httr)
 
 tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
                 "JC", "JKB", "JKC", "JKG", "JKO", "JKQ", "JKS", "JKV", "JX",
@@ -28,6 +28,25 @@ get_key <- function() {
   barenv$apikey
 }
 
+#' save server config
+#'
+#' @export
+set_server <- function(host = "localhost:5757", api = "grpc") {
+  barenv$host <- host
+  barenv$api <- api
+}
+
+get_server <- function() {
+  svr <- list(host = barenv$host, api = barenv$api)
+  if (svr$host == "") {
+    svr$host <- "localhost:5757"
+  }
+  if (svr$api == "") {
+    svr$api <- "grpc"
+  }
+  svr
+}
+
 .get_client <- function(host, proto) {
   grpc_client(read_services(proto), host)
 }
@@ -48,6 +67,14 @@ get_key <- function() {
   example <- client$AnalyzeSyntax$build(document = doc,
     encoding_type = 1, auto_split_sentence = 0, custom_domain = domain)
   client$AnalyzeSyntax$call(example, metadata = .meta(apikey))
+}
+
+.rest_analyze_text <- function(text, host, custom_domain, apikey) {
+  url <- paste("http://", host, "/bareun/api/v1/analyze", sep = "")
+  doc <- list(content = text, language = "ko_KR")
+  h <- add_headers("api-key", apikey)
+  r <- POST(url, body = doc, encode = "json", config = h)
+  content(r)
 }
 
 #' grpc cllient
@@ -75,39 +102,56 @@ get_grpc_client <- function(host, proto) {
 #' @export
 tagger <- function(text = "",
     apikey = "",
-    server = "nlp.bareun.ai", port = 5656,
-    domain = "", local = FALSE, bareun = TRUE) {
-  host <- paste(nslookup(server), ":", as.character(port), sep = "")
+    server = "", port = 5656,
+    domain = "", local = FALSE, bareun = TRUE,
+    api = "grpc") {
+  # host
+  if (server == "") {
+    host <- get_server()$host
+  } else {
+    host <- paste(nslookup(server), ":", as.character(port), sep = "")
+  }
+  # api type
+  if (api == "") {
+    api <- get_server()$api
+  }
+  # api-key
   if (apikey == "") {
     apikey <- barenv$apikey
-  }
-  if (local) {
-    if (bareun) {
-      lang_proto <- "protos/language_service.proto"
-      dict_proto <- "protos/custom_dict.proto"
-    } else {
-      lang_proto <- "protos/baikal/language_service.proto"
-      dict_proto <- "protos/baikal/custom_dict.proto"
-    }
-  } else {
-    if (bareun) {
-      lang_proto <- system.file("protos/language_service.proto",
-        package = "bareun")
-      dict_proto <- system.file("protos/custom_dict.proto",
-        package = "bareun")
-    } else {
-      lang_proto <- system.file("protos/baikal/language_service.proto",
-        package = "bareun")
-      dict_proto <- system.file("protos/baikal/custom_dict.proto",
-        package = "bareun")
-    }
   }
   custom_domain <- domain
   response <- NULL
   dict <- NULL
   if (text != "") {
-    response <- .analyze_text(text, host, lang_proto, custom_domain,
-      apikey, bareun)
+    # grpc
+    if (api == "grpc") {
+      if (local) {
+        if (bareun) {
+          lang_proto <- "protos/language_service.proto"
+          dict_proto <- "protos/custom_dict.proto"
+        } else {
+          lang_proto <- "protos/baikal/language_service.proto"
+          dict_proto <- "protos/baikal/custom_dict.proto"
+        }
+      } else {
+        if (bareun) {
+          lang_proto <- system.file("protos/language_service.proto",
+            package = "bareun")
+          dict_proto <- system.file("protos/custom_dict.proto",
+            package = "bareun")
+        } else {
+          lang_proto <- system.file("protos/baikal/language_service.proto",
+            package = "bareun")
+          dict_proto <- system.file("protos/baikal/custom_dict.proto",
+            package = "bareun")
+        }
+      }
+      response <- .analyze_text(text, host, lang_proto, custom_domain,
+        apikey, bareun)
+    } else {
+      # rest
+      response <- .rest_analyze_text(text, host, custom_domain, apikey)
+    }
   }
   tagged <- list(text = text,
     result = response,
