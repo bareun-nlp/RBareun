@@ -59,8 +59,8 @@ t <- tagger()
 ```
 - 형태소 분석 출력
 ```
-> text <- "문장을 입력합니다.\n여러 문장을 넣습니다."  
-> pos(t, text)
+text <- "문장을 입력합니다.\n여러 문장을 넣습니다."  
+pos(t, text)
 
 [[1]]
 [1] "문장/NNG"  "을/JKO"    "입력하/VV" "ㅂ니다/EF" "./SF"
@@ -70,7 +70,7 @@ t <- tagger()
 ```
 - 1번째 문장의 4번째 형태소 출력
 ```
-> postag(t, text)[[1]][[4]]
+postag(t, text)[[1]][[4]]
 
 $morpheme
 [1] "ㅂ니다"
@@ -80,7 +80,7 @@ $tag
 ```
 - 어절, 명사, 동사 출력(해당 없는 경우 빈 문자열 배열 반환)
 ```
-> morphs(t)
+morphs(t)
 
 [[1]]
 [1] "문장"   "을"     "입력하" "ㅂ니다" "."
@@ -88,7 +88,7 @@ $tag
 [[2]]
 [1] "여러"   "문장"   "을"     "넣"     "습니다" "."
 
-> nouns(t)
+nouns(t)
 
 [[1]]
 [1] "문장"
@@ -96,7 +96,7 @@ $tag
 [[2]]
 [1] "문장"
 
-> verbs(t)
+verbs(t)
 
 [[1]]
 [1] "입력하"
@@ -109,12 +109,12 @@ $tag
 
 - 만들기 & 등록하기
 ```
-> np <- c("청하", "트와이스", "티키타카", "TIKITAKA", "오마이걸")  
-> cp <- c("자유여행", "방역당국", "코로나19", "주술부", "완전주의")  
-> caret <- c("주어^역할", "주어^술어^구조", "하급^공무원")  
-> vv <- c("카톡하다", "인스타하다")  
-> va <- c("혜자스럽다", "창렬하다")  
-> make_custom_dict(t, "sample", np, cp, caret, vv, va)
+np <- c("청하", "트와이스", "티키타카", "TIKITAKA", "오마이걸")  
+cp <- c("자유여행", "방역당국", "코로나19", "주술부", "완전주의")  
+caret <- c("주어^역할", "주어^술어^구조", "하급^공무원")  
+vv <- c("카톡하다", "인스타하다")  
+va <- c("혜자스럽다", "창렬하다")  
+make_custom_dict(t, "sample", np, cp, caret, vv, va)
 
 [1] "sample : 업데이트 성공"
 ```
@@ -128,4 +128,4 @@ $tag
 
 
 
-by [Korea Press Foundation](https://bigkinds.or.kr) X [bareun.ai](https://bareun.ai)
+by [bareun.ai](https://bareun.ai) X [Korea Press Foundation](https://bigkinds.or.kr)
