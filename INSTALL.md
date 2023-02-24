@@ -105,6 +105,7 @@ install.packages('RProtoBuf')
 install.packages('curl')
 install.packages('httr')
 install.packages('jsonlite')
+devtools::install_github("bareun-nlp/grpc")
 devtools::install_github("bareun-nlp/RBareun")
 ```
 
