@@ -236,7 +236,11 @@ print_as_json <- function(tagged) {
       for (m in tk$morphemes) {
         mol <- as.list(m)
         ts <- as.list(mol$text)
-        sen <- c(sen, c(ts$content, tag_labels[mol$tag]))
+        if (typeof(mol$tag) == "integer") {
+          sen <- c(sen, c(ts$content, tag_labels[mol$tag]))
+        } else {
+          sen <- c(sen, c(ts$content, mol$tag))
+        }
       }
     }
     t <- list()
