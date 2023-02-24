@@ -5,9 +5,9 @@
 
 ## Install
 
-#### gRPC 라이브러리 설치
+#### 1) gRPC 라이브러리 설치
 
-- gRPC 라이브러리를 사용하지 않는 경우, bareun 서버를 도커로 실행하고 REST API로 호출해야 합니다.
+- gRPC를 사용하지 않는다면, RBareun만 설치하고 REST API를 사용할 수 있습니다. REST 서버는 반드시 도커로 실행해야 합니다.
 - 설치에 앞서, gRPC C++ 라이브러리를 직접 컴파일 설치해야 합니다.
 ➡️ [INSTALL](https://github.com/bareun-nlp/RBareun/blob/main/INSTALL.md) 내용 참고 
 - gRPC C++ 설치후, R에서 다음과 같이 설치 합니다.
@@ -19,7 +19,7 @@ devtools::install_github("bareun-nlp/grpc")
 ```
 - install_github 과정에서 오류가 발생할 경우, [INSTALL](https://github.com/bareun-nlp/RBareun/blob/main/INSTALL.md)의 PKG_CONFIG_PATH 설정 확인
 
-#### bareun 설치
+#### 2) RBareun 설치
 ```
 install.packagas('devtools')
 install.packages('RProtoBuf')
@@ -58,7 +58,7 @@ library(bareun)
 - set_server: 서버 설정
 - set_api: API-KEY, 서버 설정
 
-## 형태소 분석
+## Example / 형태소 분석
 
 - 라이브러리 시작: apikey는 [bareun.ai](https://bareun.ai)에서 받습니다.
 ```
@@ -124,7 +124,7 @@ verbs(t)
 [1] "넣"
 ```
 
-## 사용자 사전
+## Example / 사용자 사전
 
 - 만들기 & 등록하기
 ```
