@@ -4,6 +4,7 @@ library(curl)
 library(RProtoBuf)
 library(httr)
 library(jsonlite)
+library(grpc)
 
 tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
                 "JC", "JKB", "JKC", "JKG", "JKO", "JKQ", "JKS", "JKV", "JX",
@@ -66,6 +67,7 @@ set_api <- function(apikey, host = "localhost:5757", api = "grpc") {
   set_server(host, api)
 }
 
+#' @importFrom grpc grpc_client read_services
 .get_client <- function(host, proto) {
   grpc_client(read_services(proto), host)
 }
