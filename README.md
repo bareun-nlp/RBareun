@@ -5,20 +5,29 @@
 
 ## Install
 
+### gRPC 라이브러리 설치
+
+- gRPC 라이브러리를 사용하지 않는 경우, bareun 서버를 도커로 실행하고 REST API로 호출해야 합니다.
 - 설치에 앞서, gRPC C++ 라이브러리를 직접 컴파일 설치해야 합니다.
 ➡️ [INSTALL](https://github.com/bareun-nlp/RBareun/blob/main/INSTALL.md) 내용 참고 
-- gRPC 설치후 다음과 같이 설치
+- gRPC C++ 설치후, R에서 다음과 같이 설치 합니다.
 ```
 install.packagas('devtools')
 install.packages('openssl')
 install.packages('Rcpp')
+devtools::install_github("bareun-nlp/grpc")
+```
+- install_github 과정에서 오류가 발생할 경우, [INSTALL](https://github.com/bareun-nlp/RBareun/blob/main/INSTALL.md)의 PKG_CONFIG_PATH 설정 확인
+
+### bareun 설치
+```
+install.packagas('devtools')
 install.packages('RProtoBuf')
 install.packages('curl')
 install.packages('httr')
 install.packages('jsonlite')
 devtools::install_github("bareun-nlp/RBareun")
 ```
-- install_github 과정에서 오류가 발생할 경우, [INSTALL](https://github.com/bareun-nlp/RBareun/blob/main/INSTALL.md)의 PKG_CONFIG_PATH 설정 확인
 
 ## Usage
 
