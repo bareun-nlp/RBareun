@@ -95,9 +95,10 @@ set_api <- function(apikey, host = "localhost:5757", api = "grpc") {
 .rest_analyze_text <- function(text, host, custom_domain, apikey) {
   url <- paste("http://", host, "/bareun/api/v1/analyze", sep = "")
   doc <- list(content = text, language = "ko_KR")
-  body <- list(document = doc, encoding_type = 1)
+  body <- list(document = doc, encoding_type = "UTF8",
+    custom_domain = custom_domain)
   r <- POST(url, config = add_headers("api-key" = apikey),
-        body = body, encode = "json")
+    body = body, encode = "json")
   content(r)
 }
 
