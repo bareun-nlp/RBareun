@@ -47,6 +47,7 @@ library(bareun)
 - set_key: API-KEY 설정
 - get_key: API-KEY 보기
 - set_server: 서버 설정
+- set_api: API-KEY, 서버 설정
 
 ## 형태소 분석
 
