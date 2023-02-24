@@ -15,6 +15,7 @@ install.packages('Rcpp')
 install.packages('RProtoBuf')
 install.packages('curl')
 install.packages('httr')
+install.packages('jsonlite')
 devtools::install_github("bareun-nlp/RBareun")
 ```
 - install_github 과정에서 오류가 발생할 경우, [INSTALL](https://github.com/bareun-nlp/RBareun/blob/main/INSTALL.md)의 PKG_CONFIG_PATH 설정 확인
@@ -47,18 +48,24 @@ library(bareun)
 - get_key: API-KEY 보기
 - set_server: 서버 설정
 
-## Examples / 형태소 분석
+## 형태소 분석
 
-- 로드/호출
+- 라이브러리 시작: apikey는 bareun.ai에서 받습니다.
 ```
 library(RProtoBuf)  
-library(bareun)  
-set_key("YOUR_API_KEY")
-set_server("http://localhost:5757", api = "grpc") # api = grpc(default)/rest
+library(bareun)
+apikey <- "YOUR_API_KEY"
+set_api(apikey, "http://localhost:5757", "grpc")
+```
+
+- REST API: 도커 이미지를 사용하는 경우 REST API 사용 가능 
+```
+set_api(apikey, "http://localhost:5757", "rest")
+```
+
+- 형태소 분석
+```
 t <- tagger()  
-```
-- 형태소 분석 출력
-```
 text <- "문장을 입력합니다.\n여러 문장을 넣습니다."  
 pos(t, text)
 
@@ -68,6 +75,7 @@ pos(t, text)
 [[2]]
 [1] "여러/MMN"  "문장/NNG"  "을/JKO"    "넣/VV"     "습니다/EF" "./SF"
 ```
+
 - 1번째 문장의 4번째 형태소 출력
 ```
 postag(t, text)[[1]][[4]]
@@ -78,7 +86,8 @@ $morpheme
 $tag
 [1] "EF"
 ```
-- 어절, 명사, 동사 출력(해당 없는 경우 빈 문자열 배열 반환)
+
+- 어절, 명사, 동사 출력
 ```
 morphs(t)
 
@@ -105,7 +114,7 @@ verbs(t)
 [1] "넣"
 ```
 
-## Examples / 사용자 사전
+## 사용자 사전
 
 - 만들기 & 등록하기
 ```
@@ -127,5 +136,4 @@ make_custom_dict(t, "sample", np, cp, caret, vv, va)
 | 이따가 **카톡해**라 | [1,] "이따가" "MAG"<br>[2,] "카톡"   "NNP"<br>[3,] "하"     "VV"<br>[4,] "아라"   "EF"<br> | [1,] "이따가" "MAG"<br>[2,] <b>"카톡하" "VV"</b><br>[3,] "아라"   "EF"<br> | '카톡하다'가 '카톡(명사)+하'가 아니라 동사로 처리 |
 
 
-
-by [bareun.ai](https://bareun.ai) X [Korea Press Foundation](https://bigkinds.or.kr)
+by [bareun.ai](https://bareun.ai) = [baikal.ai](https://baikal.ai) X [Korea Press Foundation](https://bigkinds.or.kr)
