@@ -6,6 +6,9 @@
 \usage{
 set_key(apikey)
 }
+\arguments{
+\item{apikey}{string - bareun user's api key}
+}
 \description{
 save api key
 }
