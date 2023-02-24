@@ -7,11 +7,12 @@
 tagger(
   text = "",
   apikey = "",
-  server = "nlp.bareun.ai",
+  server = "",
   port = 5656,
   domain = "",
   local = FALSE,
-  bareun = TRUE
+  bareun = TRUE,
+  api = ""
 )
 }
 \arguments{
