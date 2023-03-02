@@ -8,7 +8,7 @@
 #### [0] gRPC 라이브러리 설치
 
 - gRPC는 바른이 지원하는 기본 API입니다. 속도가 빠르고 많은 API 호출에 적합합니다.
-- 바른 서버를 도커로 실행하면 REST API를 사용할 수 있습니다. (REST 만 사용할 경우 gRPC 라이브러리를 설치하지 않아도 됩니다. [[1]](https://github.com/bareun-nlp/RBareun#1-rbareun-%EC%84%A4%EC%B9%98))
+- 바른 서버를 도커로 실행하면 REST API를 사용할 수 있습니다. (REST 만 사용할 경우 gRPC 라이브러리를 설치하지 않아도 됩니다. [[1]](#1-rbareun-%EC%84%A4%EC%B9%98))
 - 설치에 앞서, gRPC C++ 라이브러리를 직접 컴파일 설치해야 합니다. => [INSTALL](https://github.com/bareun-nlp/RBareun/blob/main/INSTALL.md) 내용 참고 
 - gRPC C++ 설치후, R에서 다음과 같이 설치 합니다.
 ```
