@@ -4,7 +4,7 @@
 \alias{set_server}
 \title{save server config}
 \usage{
-set_server(host = "localhost:5757", api = "grpc")
+set_server(host = "localhost:5757", api = "rest")
 }
 \arguments{
 \item{host}{string - bareun api server (addr:port)}

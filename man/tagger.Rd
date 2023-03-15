@@ -8,7 +8,7 @@ tagger(
   text = "",
   apikey = "",
   server = "",
-  port = 5656,
+  port = 5757,
   domain = "",
   local = FALSE,
   bareun = TRUE,
@@ -20,9 +20,9 @@ tagger(
 
 \item{apikey}{string - Bareun user's API KEY}
 
-\item{server}{string - Bareun grpc server address}
+\item{server}{string - Bareun server address}
 
-\item{port}{number - Bareun grpc server port}
+\item{port}{number - Bareun server port}
 
 \item{domain}{string - custom domain (custom dictionary)}
 
@@ -33,7 +33,7 @@ returns tagged object
 }
 \description{
 \itemize{
-\item Bareun grpc 서버를 호출하여 입력 문장(들)의 분석 결과를 가져 온다
+\item Bareun 서버를 호출하여 입력 문장(들)의 분석 결과를 가져 온다
 }
 }
 \examples{

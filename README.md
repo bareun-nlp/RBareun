@@ -5,24 +5,8 @@
 
 ## Install
 
-#### [0] gRPC 라이브러리 설치
-
-- gRPC는 바른이 지원하는 기본 API입니다. 속도가 빠르고 많은 API 호출에 적합합니다.
-- 바른 서버를 도커로 실행하면 REST API를 사용할 수 있습니다. REST API만 사용할 경우 gRPC 라이브러리를 설치하지 않고 바로 [[1]](#1-rbareun-%EC%84%A4%EC%B9%98)로 진행하면 됩니다.
-- 설치에 앞서, gRPC C++ 라이브러리를 직접 컴파일 설치해야 합니다. => [INSTALL](https://github.com/bareun-nlp/RBareun/blob/main/INSTALL.md) 내용 참고 
-- gRPC C++ 설치후 R에서 다음과 같이 설치 합니다.
 ```
 install.packagas('devtools')
-install.packages('openssl')
-install.packages('Rcpp')
-devtools::install_github("bareun-nlp/grpc")
-```
-- install_github 과정에서 오류가 발생할 경우, [INSTALL](https://github.com/bareun-nlp/RBareun/blob/main/INSTALL.md)의 PKG_CONFIG_PATH 설정 확인
-
-#### [1] RBareun 설치
-```
-install.packagas('devtools')
-install.packages('RProtoBuf')
 install.packages('curl')
 install.packages('httr')
 install.packages('jsonlite')
@@ -33,8 +17,6 @@ devtools::install_github("bareun-nlp/RBareun")
 
 - 패키지 사용 방법
 ```
-library(RProtoBuf)
-library(grpc)
 library(bareun)
 ```
 
@@ -63,21 +45,8 @@ library(bareun)
 
 - 공통: apikey는 [bareun.ai](https://bareun.ai)에 가입하면 받을 수 있습니다.
 ```
+library(bareun)
 apikey <- "YOUR_API_KEY"
-```
-
-- gRPC
-```
-library(RProtoBuf)
-library(grpc)
-library(bareun)
-set_api(apikey, "http://localhost:5757", "grpc")
-```
-
-- REST API
-```
-library(RProtoBuf)
-library(bareun)
 set_api(apikey, "http://localhost:5757", "rest")
 ```
 

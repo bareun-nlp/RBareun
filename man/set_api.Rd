@@ -4,7 +4,7 @@
 \alias{set_api}
 \title{save api config}
 \usage{
-set_api(apikey, host = "localhost:5757", api = "grpc")
+set_api(apikey, host = "localhost:5757", api = "rest")
 }
 \arguments{
 \item{apikey}{string - bareun user's api key}
