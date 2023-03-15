@@ -526,6 +526,18 @@ build_dict_set <- function(tagged, domain, name, dict_set) {
   ds
 }
 
+#' Build Custom Dictionary
+#'
+#' - 사용자 사전 데이터 구조 만들기
+#'
+#' @param tagged Bareun tagger result
+#' @param domain domain name of custom dictionary
+#' @param nps set of np-set dictinary
+#' @param cps set of cp-set dictinary
+#' @param carets set of cp-caret-set dictinary
+#' @param vvs set of vv-set dictinary
+#' @param vas set of va-set dictinary
+#' @return dict
 #' @export
 build_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
   dict <- list()
