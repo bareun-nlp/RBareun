@@ -43,9 +43,9 @@ library(bareun)
 
 ## Example / 형태소 분석
 
-- API키는 [bareun.ai](https://bareun.ai){:target="_blank"}에 가입하면 받을 수 있습니다.
+- API키는 [bareun.ai](https://bareun.ai)에 가입하면 받을 수 있습니다.
 
-- 서버 실행: 도커를 사용하여 바른 서버를 실행합니다. => [실행방법](https://docs.bareun.ai/install/docker/#_2){:target="_blank"}
+- 서버 실행: 도커를 사용하여 바른 서버를 실행합니다. => [실행방법](https://docs.bareun.ai/install/docker/#_2)
 
 ```
 library(bareun)
