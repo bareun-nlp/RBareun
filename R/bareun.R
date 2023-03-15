@@ -516,11 +516,13 @@ build_dict_set <- function(tagged, domain, name, dict_set) {
   ds <- list()
   ds$name <- paste(domain, "-", name, sep = "")
   ds$type <- 1 # common.DictType.WORD_LIST
+  ds$items <- array(list(), length(dict_set))
+  i <- 0
   for (v in dict_set) {
-    de <- list()
-    de$value <- 1
-    de$key <- v
-    ds$items <- c(ds$items, de)
+    i <- i + 1
+    print(v)
+    ds$items[[i]]$key <- v
+    ds$items[[i]]$value <- 1
   }
   ds
 }
@@ -557,7 +559,8 @@ make_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
   url <- paste("http://", tagged$host,
       "/bareun/api/v1/customdict/", domain, sep = "")
   body <- list(domain_name = domain, dict = dict)
-  r <- POST(url, config = add_headers("api-key" = get_key()),
+  r <- POST(url, config = add_headers("api-key" = get_key(),
+      "Content-Type" = "application/json"),
       body = body, encode = "json")
   res <- content(r, preserve_proto_field_names = TRUE, encoding = "UTF-8")
   if (r$status_code == 200) {
