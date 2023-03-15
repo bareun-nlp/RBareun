@@ -43,11 +43,15 @@ library(bareun)
 
 ## Example / 형태소 분석
 
-- 공통: apikey는 [bareun.ai](https://bareun.ai)에 가입하면 받을 수 있습니다.
+- API키는 [bareun.ai](https://bareun.ai)에 가입하면 받을 수 있습니다.
+
+- 서버 실행: 도커를 사용하여 바른 서버를 실행합니다. [실행방법](https://docs.bareun.ai/install/docker/#_2)
+
 ```
 library(bareun)
-apikey <- "YOUR_API_KEY"
-set_api(apikey, "http://localhost:5757", "rest")
+apikey <- "(발급받은 API키)"
+server <- "(실행한 서버 주소나 호스트 이름):5757"
+set_api(apikey, server)
 ```
 
 - 형태소 분석
