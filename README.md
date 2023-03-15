@@ -13,13 +13,6 @@ install.packages('jsonlite')
 devtools::install_github("bareun-nlp/RBareun")
 ```
 
-## Usage
-
-- 패키지 사용 방법
-```
-library(bareun)
-```
-
 ## Functions
 
 - tagger: Bareun 서버를 호출하여 문장(들)을 분석
@@ -41,18 +34,22 @@ library(bareun)
 - set_server: 서버 설정
 - set_api: API-KEY, 서버 설정
 
-## Example / 형태소 분석
+## Usage
 
-- API키는 [bareun.ai](https://bareun.ai)에 가입하면 받을 수 있습니다.
+- 패키지 사용 방법
 
-- 서버 실행: 도커를 사용하여 바른 서버를 실행합니다. => [실행방법](https://docs.bareun.ai/install/docker/#_2)
+1. [bareun.ai](https://bareun.ai)에 가입하여 API키를 발급받습니다.
+2. 도커로 서버를 실행합니다. => [실행방법](https://docs.bareun.ai/install/docker/#_2)
 
 ```
 library(bareun)
+# apikey는 반드시 입력해야 합니다.
 apikey <- "(발급받은 API키)"
-server <- "(실행한 서버 주소나 호스트 이름):5757"
+server <- "(실행한 서버 이름이나 주소)"
 set_api(apikey, server)
 ```
+
+## Example / 형태소 분석
 
 - 형태소 분석
 ```

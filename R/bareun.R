@@ -57,11 +57,13 @@ get_server <- function() {
 #' save api config
 #'
 #' @param apikey string - bareun user's api key
-#' @param host string - bareun api server (addr:port)
-#' @param api string - api type (grpc or rest)
+#' @param server string - bareun api server name or ip
+#' @param port number - bareun api server port (default: 5757)
+#' @param api string - api type (rest or grpc)
 #' @export
-set_api <- function(apikey, host = "localhost:5757", api = "rest") {
+set_api <- function(apikey, server = "localhost", port = 5757, api = "rest") {
   set_key(apikey)
+  host <- paste(server, ":", as.character(port), sep = "")
   set_server(host, api)
 }
 
