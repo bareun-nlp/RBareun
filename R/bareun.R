@@ -2,7 +2,7 @@
 
 library(curl)
 library(httr)
-library(jsonlite)
+library(rjson)
 
 tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
                 "JC", "JKB", "JKC", "JKG", "JKO", "JKQ", "JKS", "JKV", "JX",
@@ -144,7 +144,7 @@ tagger <- function(text = "",
 #'
 #' @param tagged Bareun tagger result
 #' @return returns JSON string
-#' @importFrom jsonlite toJSON
+#' @importFrom rjson toJSON
 #' @export
 as_json_string <- function(tagged) {
   if (is.null(tagged$result)) {
@@ -518,8 +518,8 @@ build_dict_set <- function(tagged, domain, name, dict_set) {
   ds$type <- 1 # common.DictType.WORD_LIST
   for (v in dict_set) {
     de <- list()
-    de$key <- v
     de$value <- 1
+    de$key <- v
     ds$items <- c(ds$items, de)
   }
   ds
@@ -550,7 +550,7 @@ build_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
 #' @param vas set of va-set dictinary
 #' @return print result
 #' @importFrom httr POST add_headers content
-#' @importFrom jsonlite toJSON fromJSON
+#' @importFrom rjson toJSON fromJSON
 #' @export
 make_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
   dict <- build_custom_dict(tagged, domain, nps, cps, carets, vvs, vas)
@@ -560,8 +560,12 @@ make_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
   r <- POST(url, config = add_headers("api-key" = get_key()),
       body = body, encode = "json")
   res <- content(r, preserve_proto_field_names = TRUE, encoding = "UTF-8")
-  if (res$updated == domain) {
-    print(paste(domain, ": 업데이트 성공"))
+  if (r$status_code == 200) {
+    if (res$updated == domain) {
+      print(paste(domain, ": 업데이트 성공"))
+    }
+  } else {
+    print(res)
   }
 }
 
