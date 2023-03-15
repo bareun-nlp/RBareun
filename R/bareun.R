@@ -1,10 +1,8 @@
-# package bareun: Bareun grpc client
+# package bareun: Bareun R client
 
 library(curl)
-library(RProtoBuf)
 library(httr)
 library(jsonlite)
-library(grpc)
 
 tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
                 "JC", "JKB", "JKC", "JKG", "JKO", "JKQ", "JKS", "JKV", "JX",
@@ -36,7 +34,7 @@ get_key <- function() {
 #' @param host string - bareun api server (addr:port)
 #' @param api string - api type (grpc or rest)
 #' @export
-set_server <- function(host = "localhost:5757", api = "grpc") {
+set_server <- function(host = "localhost:5757", api = "rest") {
   barenv$host <- host
   barenv$api <- api
 }
@@ -51,7 +49,7 @@ get_server <- function() {
     svr$host <- "localhost:5757"
   }
   if (svr$api == "") {
-    svr$api <- "grpc"
+    svr$api <- "rest"
   }
   svr
 }
@@ -59,36 +57,18 @@ get_server <- function() {
 #' save api config
 #'
 #' @param apikey string - bareun user's api key
-#' @param host string - bareun api server (addr:port)
-#' @param api string - api type (grpc or rest)
+#' @param server string - bareun api server name or ip
+#' @param port number - bareun api server port (default: 5757)
+#' @param api string - api type (rest or grpc)
 #' @export
-set_api <- function(apikey, host = "localhost:5757", api = "grpc") {
+set_api <- function(apikey, server = "localhost", port = 5757, api = "rest") {
   set_key(apikey)
+  host <- paste(server, ":", as.character(port), sep = "")
   set_server(host, api)
-}
-
-#' @importFrom grpc grpc_client read_services
-.get_client <- function(host, proto) {
-  grpc_client(read_services(proto), host)
 }
 
 .meta <- function(apikey) {
   c("api-key", apikey)
-}
-
-#' @importFrom RProtoBuf P
-.analyze_text <- function(text, host, proto, domain, apikey, bareun) {
-  client <- .get_client(host, proto)
-  if (bareun) {
-    doc <- new(P("bareun.Document", file = proto))
-  } else {
-    doc <- new(P("baikal.language.Document", file = proto))
-  }
-  doc$content <- text
-  doc$language <- "ko_KR"
-  example <- client$AnalyzeSyntax$build(document = doc,
-    encoding_type = 1, auto_split_sentence = 0, custom_domain = domain)
-  client$AnalyzeSyntax$call(example, metadata = .meta(apikey))
 }
 
 #' @importFrom httr POST add_headers content
@@ -102,21 +82,14 @@ set_api <- function(apikey, host = "localhost:5757", api = "grpc") {
   content(r)
 }
 
-#' grpc cllient
-#'
-#' @export
-get_grpc_client <- function(host, proto) {
-  .get_client(host, proto)
-}
-
 #' Call Bareun server to read postag result message for the sentences
 #'
-#' - Bareun grpc 서버를 호출하여 입력 문장(들)의 분석 결과를 가져 온다
+#' - Bareun 서버를 호출하여 입력 문장(들)의 분석 결과를 가져 온다
 #'
 #' @param text string - subject sentences splitted by newlines(\\n)
 #' @param apikey string - Bareun user's API KEY
-#' @param server string - Bareun grpc server address
-#' @param port number - Bareun grpc server port
+#' @param server string - Bareun server address
+#' @param port number - Bareun server port
 #' @param domain string - custom domain (custom dictionary)
 #' @param local bool - use local protobuf files, if TRUE
 #' @return returns tagged object
@@ -126,7 +99,7 @@ get_grpc_client <- function(host, proto) {
 #' @export
 tagger <- function(text = "",
     apikey = "",
-    server = "", port = 5656,
+    server = "", port = 5757,
     domain = "", local = FALSE, bareun = TRUE,
     api = "") {
   # host
@@ -148,36 +121,8 @@ tagger <- function(text = "",
   dict <- NULL
   lang_proto <- ""
   dict_proto <- ""
-  if (local) {
-    if (bareun) {
-      lang_proto <- "protos/language_service.proto"
-      dict_proto <- "protos/custom_dict.proto"
-    } else {
-      lang_proto <- "protos/baikal/language_service.proto"
-      dict_proto <- "protos/baikal/custom_dict.proto"
-    }
-  } else {
-    if (bareun) {
-      lang_proto <- system.file("protos/language_service.proto",
-        package = "bareun")
-      dict_proto <- system.file("protos/custom_dict.proto",
-        package = "bareun")
-    } else {
-      lang_proto <- system.file("protos/baikal/language_service.proto",
-        package = "bareun")
-      dict_proto <- system.file("protos/baikal/custom_dict.proto",
-        package = "bareun")
-    }
-  }
   if (text != "") {
-    # grpc
-    if (api == "grpc") {
-      response <- .analyze_text(text, host, lang_proto, custom_domain,
-        apikey, bareun)
-    } else {
-      # rest
-      response <- .rest_analyze_text(text, host, custom_domain, apikey)
-    }
+    response <- .rest_analyze_text(text, host, custom_domain, apikey)
   }
   tagged <- list(text = text,
     result = response,
@@ -199,7 +144,7 @@ tagger <- function(text = "",
 #'
 #' @param tagged Bareun tagger result
 #' @return returns JSON string
-#' @importFrom RProtoBuf toJSON
+#' @importFrom jsonlite toJSON
 #' @export
 as_json_string <- function(tagged) {
   if (is.null(tagged$result)) {
@@ -262,13 +207,8 @@ print_as_json <- function(tagged) {
       res <- tagged$result
     } else {
       # 새로운 문자열이면 실행 결과를 저장
-      if (tagged$api == "grpc") {
-        res <- .analyze_text(text, tagged$host, tagged$lang_proto,
-          tagged$domain, tagged$apikey, tagged$bareun)
-      } else {
-        res <- .rest_analyze_text(text, tagged$host, tagged$domain,
-          tagged$apikey)
-      }
+      res <- .rest_analyze_text(text, tagged$host, tagged$domain,
+        tagged$apikey)
       t <- tagged
       t$text <- text
       t$result <- res
@@ -470,12 +410,6 @@ verbs <- function(tagged = NULL, text = "") {
 
 # For Custom dicts
 
-.get_dic_list <- function(host, proto, apikey) {
-    cli <- .get_client(host, proto)
-    ops <- cli$GetCustomDictionaryList$build()
-    cli$GetCustomDictionaryList$call(ops, metadata = .meta(apikey))
-}
-
 #' @importFrom httr GET add_headers content
 .rest_get_dic <- function(host, apikey, name = "") {
   if (name == "") {
@@ -495,11 +429,7 @@ verbs <- function(tagged = NULL, text = "") {
 #' @return returns dict
 #' @export
 dict_list <- function(tagged) {
-  if (tagged$api == "grpc") {
-    dl <- .get_dic_list(tagged$host, tagged$dict_proto, tagged$apikey)
-  } else {
-    dl <- .rest_get_dic(tagged$host, tagged$apikey)
-  }
+  dl <- .rest_get_dic(tagged$host, tagged$apikey)
   out <- c()
   for (d in as.list(dl)$domain) {
     out <- c(out, as.list(d)$domain)
@@ -516,13 +446,7 @@ dict_list <- function(tagged) {
 #' @return returns dict
 #' @export
 get_dict <- function(tagged, name) {
-  if (tagged$api == "grpc") {
-    cli <- .get_client(tagged$host, tagged$dict_proto)
-    ops <- cli$GetCustomDictionary$build(domain_name = name)
-    dict <- cli$GetCustomDictionary$call(ops, metadata = .meta(tagged$apikey))
-  } else {
-    dict <- .rest_get_dic(tagged$host, tagged$apikey, name)
-  }
+  dict <- .rest_get_dic(tagged$host, tagged$apikey, name)
   t <- tagged
   t$custom_dict <- dict
   t$domain <- name
@@ -589,20 +513,11 @@ print_dict_all <- function(tagged) {
 #' @return returns DictSet
 #' @export
 build_dict_set <- function(tagged, domain, name, dict_set) {
-  if (tagged$bareun) {
-    ds <- new(P("bareun.DictSet", file = tagged$dict_proto))
-  } else {
-    ds <- new(P("baikal.language.DictSet", file = tagged$dict_proto))
-  }
+  ds <- list()
   ds$name <- paste(domain, "-", name, sep = "")
   ds$type <- 1 # common.DictType.WORD_LIST
-  if (tagged$bareun) {
-    dsentry <- P("bareun.DictSet.ItemsEntry", file = tagged$dict_proto)
-  } else {
-    dsentry <- P("baikal.language.DictSet.ItemsEntry", file = tagged$dict_proto)
-  }
   for (v in dict_set) {
-    de <- new(dsentry)
+    de <- list()
     de$key <- v
     de$value <- 1
     ds$items <- c(ds$items, de)
@@ -612,13 +527,7 @@ build_dict_set <- function(tagged, domain, name, dict_set) {
 
 #' @export
 build_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
-  if (tagged$bareun) {
-    dict <- new(P("bareun.CustomDictionary",
-      file = tagged$dict_proto))
-  } else {
-    dict <- new(P("baikal.language.CustomDictionary",
-      file = tagged$dict_proto))
-  }
+  dict <- list()
   dict$domain_name <- domain
   dict$np_set <- build_dict_set(tagged, domain, "np-set", nps)
   dict$cp_set <- build_dict_set(tagged, domain, "cp-set", cps)
@@ -641,24 +550,16 @@ build_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
 #' @param vas set of va-set dictinary
 #' @return print result
 #' @importFrom httr POST add_headers content
-#' @importFrom RProtoBuf toJSON
-#' @importFrom jsonlite fromJSON
+#' @importFrom jsonlite toJSON fromJSON
 #' @export
 make_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
   dict <- build_custom_dict(tagged, domain, nps, cps, carets, vvs, vas)
-  if (tagged$api == "grpc") {
-    cli <- .get_client(tagged$host, tagged$dict_proto)
-    ops <- cli$UpdateCustomDictionary$build(domain_name = domain, dict = dict)
-    res <- cli$UpdateCustomDictionary$call(ops, metadata = .meta(tagged$apikey))
-  } else {
-    url <- paste("http://", tagged$host,
-        "/bareun/api/v1/customdict/", domain, sep = "")
-    body <- list(domain_name = domain,
-        dict = fromJSON(dict$toJSON(preserve_proto_field_names = TRUE)))
-    r <- POST(url, config = add_headers("api-key" = get_key()),
-        body = body, encode = "json")
-    res <- content(r, preserve_proto_field_names = TRUE)
-  }
+  url <- paste("http://", tagged$host,
+      "/bareun/api/v1/customdict/", domain, sep = "")
+  body <- list(domain_name = domain, dict = dict)
+  r <- POST(url, config = add_headers("api-key" = get_key()),
+      body = body, encode = "json")
+  res <- content(r, preserve_proto_field_names = TRUE, encoding = "UTF-8")
   if (res$updated == domain) {
     print(paste(domain, ": 업데이트 성공"))
   }
@@ -674,19 +575,12 @@ make_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
 #' @importFrom httr POST add_headers content
 #' @export
 remove_custom_dict <- function(tagged, names) {
-  if (tagged$api == "grpc") {
-    cli <- .get_client(tagged$host, tagged$dict_proto)
-    ops <- cli$RemoveCustomDictionaries$build(domain_names = names)
-    res <- cli$RemoveCustomDictionaries$call(ops,
-        metadata = .meta(tagged$apikey))
-  } else {
-    url <- paste("http://", tagged$host,
-        "/bareun/api/v1/customdict/delete", sep = "")
-    body <- list(domain_names = names)
-    r <- POST(url, config = add_headers("api-key" = get_key()),
-        body = body, encode = "json")
-    res <- content(r)
-  }
+  url <- paste("http://", tagged$host,
+      "/bareun/api/v1/customdict/delete", sep = "")
+  body <- list(domain_names = names)
+  r <- POST(url, config = add_headers("api-key" = get_key()),
+      body = body, encode = "json")
+  res <- content(r)
   for (d in as.list(res)$deleted) {
     print(d)
   }
