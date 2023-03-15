@@ -520,7 +520,6 @@ build_dict_set <- function(tagged, domain, name, dict_set) {
   i <- 0
   for (v in dict_set) {
     i <- i + 1
-    print(v)
     ds$items[[i]]$key <- v
     ds$items[[i]]$value <- 1
   }
