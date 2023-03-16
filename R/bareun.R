@@ -516,12 +516,10 @@ build_dict_set <- function(tagged, domain, name, dict_set) {
   ds <- list()
   ds$name <- paste(domain, "-", name, sep = "")
   ds$type <- 1 # common.DictType.WORD_LIST
-  ds$items <- array(list(), length(dict_set))
-  i <- 0
   for (v in dict_set) {
-    i <- i + 1
-    ds$items[[i]]$key <- v
-    ds$items[[i]]$value <- 1
+    l <- list()
+    l[[v]] <- 1
+    ds$items <- c(ds$items, l)
   }
   ds
 }
