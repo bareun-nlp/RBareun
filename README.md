@@ -9,7 +9,7 @@
 install.packagas('devtools')
 install.packages('curl')
 install.packages('httr')
-install.packages('jsonlite')
+install.packages('rjson')
 devtools::install_github("bareun-nlp/RBareun")
 ```
 
