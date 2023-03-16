@@ -516,16 +516,26 @@ build_dict_set <- function(tagged, domain, name, dict_set) {
   ds <- list()
   ds$name <- paste(domain, "-", name, sep = "")
   ds$type <- 1 # common.DictType.WORD_LIST
-  ds$items <- array(list(), length(dict_set))
-  i <- 0
   for (v in dict_set) {
-    i <- i + 1
-    ds$items[[i]]$key <- v
-    ds$items[[i]]$value <- 1
+    l <- list()
+    l[[v]] <- 1
+    ds$items <- c(ds$items, l)
   }
   ds
 }
 
+#' Build Custom Dictionary
+#'
+#' - 사용자 사전 데이터 구조 만들기
+#'
+#' @param tagged Bareun tagger result
+#' @param domain domain name of custom dictionary
+#' @param nps set of np-set dictinary
+#' @param cps set of cp-set dictinary
+#' @param carets set of cp-caret-set dictinary
+#' @param vvs set of vv-set dictinary
+#' @param vas set of va-set dictinary
+#' @return dict
 #' @export
 build_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
   dict <- list()
