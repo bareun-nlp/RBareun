@@ -4,7 +4,7 @@
 \alias{as_json_string}
 \title{Return JSON string for response message}
 \usage{
-as_json_string(tagged)
+as_json_string(tagged, pretty = FALSE)
 }
 \arguments{
 \item{tagged}{Bareun tagger result}
