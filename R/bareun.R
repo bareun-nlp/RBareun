@@ -2,7 +2,7 @@
 
 library(curl)
 library(httr)
-library(rjson)
+library(jsonlite)
 
 tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
                 "JC", "JKB", "JKC", "JKG", "JKO", "JKQ", "JKS", "JKV", "JX",
@@ -133,7 +133,8 @@ tagger <- function(text = "",
     api = api,
     lang_proto = lang_proto,
     dict_proto = dict_proto,
-    bareun = bareun)
+    bareun = bareun
+  )
   class(tagged) <- "tagged"
   tagged
 }
@@ -144,13 +145,13 @@ tagger <- function(text = "",
 #'
 #' @param tagged Bareun tagger result
 #' @return returns JSON string
-#' @importFrom rjson toJSON
+#' @importFrom jsonlite toJSON
 #' @export
-as_json_string <- function(tagged) {
+as_json_string <- function(tagged, pretty = FALSE) {
   if (is.null(tagged$result)) {
-    "No result"
+    "No result\n"
   } else {
-    toJSON(tagged$result)
+    toJSON(tagged$result, pretty = pretty)
   }
 }
 
@@ -162,11 +163,7 @@ as_json_string <- function(tagged) {
 #' @return prints JSON string
 #' @export
 print_as_json <- function(tagged) {
-  if (is.null(tagged$result)) {
-    "No result"
-  } else {
-    cat(as_json_string(tagged))
-  }
+  cat(as_json_string(tagged, pretty = TRUE), sep = "\n")
 }
 
 .tagging <- function(m) {
@@ -201,14 +198,12 @@ print_as_json <- function(tagged) {
     t <- tagger(text)
     res <- t$result
   } else {
-    t <- tagged
     # 문자열이 주어지지 않으면 이전 결과를 파싱
     if (text == "") {
       res <- tagged$result
     } else {
-      # 새로운 문자열이면 실행 결과를 저장
-      res <- .rest_analyze_text(text, tagged$host, tagged$domain,
-        tagged$apikey)
+      # 새로운 문자열이면 실행, 저장
+      res <- .rest_analyze_text(text, tagged$host, tagged$domain, tagged$apikey)
       t <- tagged
       t$text <- text
       t$result <- res
@@ -218,10 +213,15 @@ print_as_json <- function(tagged) {
   res
 }
 
+#' analyze_text
+#'
+#' @param tagged Bareun tagger result
+#' @param text string - input text
+#' @return raw result
 #' @export
 analyze_text <- function(tagged, text) {
-  res <- .rest_analyze_text(text, tagged$host, tagged$domain,
-          tagged$apikey)
+  tg <- .tagged(tagged)
+  res <- .rest_analyze_text(text, tg$host, tg$domain, tg$apikey)
   res
 }
 
@@ -561,7 +561,7 @@ build_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
 #' @param vas set of va-set dictinary
 #' @return print result
 #' @importFrom httr POST add_headers content
-#' @importFrom rjson toJSON fromJSON
+#' @importFrom jsonlite toJSON fromJSON
 #' @export
 make_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
   dict <- build_custom_dict(tagged, domain, nps, cps, carets, vvs, vas)
