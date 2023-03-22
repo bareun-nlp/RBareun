@@ -220,8 +220,7 @@ print_as_json <- function(tagged) {
 #' @return raw result
 #' @export
 analyze_text <- function(tagged, text) {
-  tg <- .tagged(tagged)
-  res <- .rest_analyze_text(text, tg$host, tg$domain, tg$apikey)
+  res <- .rest_analyze_text(text, tagged$host, tagged$domain, tagged$apikey)
   res
 }
 
