@@ -46,6 +46,8 @@ library(bareun)
 # apikey는 반드시 입력해야 합니다.
 apikey <- "(발급받은 API키)"
 server <- "(실행한 서버 이름이나 주소)"
+# 서버 이름은 url이 아닙니다. 서버의 이름이나 주소만 입력해야 합니다.
+# 예) localhost에서 실행한 경우: server <- "localhost" 또는 server <- "127.0.0.1"
 set_api(apikey, server)
 ```
 
