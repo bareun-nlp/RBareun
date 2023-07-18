@@ -72,10 +72,12 @@ set_api <- function(apikey, server = "localhost", port = 5757, api = "rest") {
 }
 
 #' @importFrom httr POST add_headers content
-.rest_analyze_text <- function(text, host, custom_domain, apikey) {
+.rest_analyze_text <- function(text, host, custom_domain,
+    auto_spacing, auto_jointing, apikey) {
   url <- paste("http://", host, "/bareun/api/v1/analyze", sep = "")
   doc <- list(content = text, language = "ko_KR")
   body <- list(document = doc, encoding_type = "UTF8",
+    auto_spacing = auto_spacing, auto_jointing = auto_jointing,
     custom_domain = custom_domain)
   r <- POST(url, config = add_headers("api-key" = apikey),
     body = body, encode = "json")
@@ -99,8 +101,13 @@ set_api <- function(apikey, server = "localhost", port = 5757, api = "rest") {
 #' @export
 tagger <- function(text = "",
     apikey = "",
-    server = "", port = 5757,
-    domain = "", local = FALSE, bareun = TRUE,
+    server = "",
+    port = 5757,
+    domain = "",
+    local = FALSE,
+    bareun = TRUE,
+    auto_spacing = TRUE,
+    auto_jointing = TRUE,
     api = "") {
   # host
   if (server == "") {
@@ -121,8 +128,11 @@ tagger <- function(text = "",
   dict <- NULL
   lang_proto <- ""
   dict_proto <- ""
+  auto_spacing <- auto_spacing
+  auto_jointing <- auto_jointing
   if (text != "") {
-    response <- .rest_analyze_text(text, host, custom_domain, apikey)
+    response <- .rest_analyze_text(text, host, custom_domain,
+      auto_spacing, auto_jointing, apikey)
   }
   tagged <- list(text = text,
     result = response,
@@ -133,6 +143,8 @@ tagger <- function(text = "",
     api = api,
     lang_proto = lang_proto,
     dict_proto = dict_proto,
+    auto_spacing = auto_spacing,
+    auto_jointing = auto_jointing,
     bareun = bareun
   )
   class(tagged) <- "tagged"
@@ -203,7 +215,8 @@ print_as_json <- function(tagged) {
       res <- tagged$result
     } else {
       # 새로운 문자열이면 실행, 저장
-      res <- .rest_analyze_text(text, tagged$host, tagged$domain, tagged$apikey)
+      res <- .rest_analyze_text(text, tagged$host, tagged$domain,
+          tagged$auto_spacing, tagged$auto_jointing, tagged$apikey)
       t <- tagged
       t$text <- text
       t$result <- res
@@ -220,7 +233,8 @@ print_as_json <- function(tagged) {
 #' @return raw result
 #' @export
 analyze_text <- function(tagged, text) {
-  res <- .rest_analyze_text(text, tagged$host, tagged$domain, tagged$apikey)
+  res <- .rest_analyze_text(text, tagged$host, tagged$domain,
+      tagged$auto_spacing, tagged$auto_jointing, tagged$apikey)
   res
 }
 
