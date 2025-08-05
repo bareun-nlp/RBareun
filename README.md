@@ -39,7 +39,8 @@ devtools::install_github("bareun-nlp/RBareun")
 - 패키지 사용 방법
 
 1. [bareun.ai](https://bareun.ai)에 가입하여 API키를 발급받습니다.
-2. 도커로 서버를 실행합니다. => [실행방법](https://docs.bareun.ai/install/docker/#_2)
+2. 서버를 실행합니다. => [실행방법](https://docs.bareun.ai/install/overview/)
+  - REST API를 사용해야 하는데, bareun 3.0 rc4 이후부터는 모든 설치본이 REST를 지원합니다.
 
 ```
 library(bareun)

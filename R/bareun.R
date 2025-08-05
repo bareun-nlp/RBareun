@@ -34,7 +34,7 @@ get_key <- function() {
 #' @param host string - bareun api server (addr:port)
 #' @param api string - api type (grpc or rest)
 #' @export
-set_server <- function(host = "localhost:5757", api = "rest") {
+set_server <- function(host = "localhost:5656", api = "rest") {
   barenv$host <- host
   barenv$api <- api
 }
@@ -46,7 +46,7 @@ set_server <- function(host = "localhost:5757", api = "rest") {
 get_server <- function() {
   svr <- list(host = barenv$host, api = barenv$api)
   if (svr$host == "") {
-    svr$host <- "localhost:5757"
+    svr$host <- "localhost:5656"
   }
   if (svr$api == "") {
     svr$api <- "rest"
@@ -58,10 +58,10 @@ get_server <- function() {
 #'
 #' @param apikey string - bareun user's api key
 #' @param server string - bareun api server name or ip
-#' @param port number - bareun api server port (default: 5757)
+#' @param port number - bareun api server port (default: 5656)
 #' @param api string - api type (rest or grpc)
 #' @export
-set_api <- function(apikey, server = "localhost", port = 5757, api = "rest") {
+set_api <- function(apikey, server = "localhost", port = 5656, api = "rest") {
   set_key(apikey)
   host <- paste(server, ":", as.character(port), sep = "")
   set_server(host, api)
@@ -74,7 +74,7 @@ set_api <- function(apikey, server = "localhost", port = 5757, api = "rest") {
 #' @importFrom httr POST add_headers content
 .rest_analyze_text <- function(text, host, custom_domain,
     auto_spacing, auto_jointing, apikey) {
-  url <- paste("http://", host, "/bareun/api/v1/analyze", sep = "")
+  url <- paste("http://", host, "/bareun.LanguageService/AnalyzeSyntax", sep = "")
   doc <- list(content = text, language = "ko_KR")
   body <- list(document = doc, encoding_type = "UTF8",
     auto_spacing = auto_spacing, auto_jointing = auto_jointing,
@@ -102,7 +102,7 @@ set_api <- function(apikey, server = "localhost", port = 5757, api = "rest") {
 tagger <- function(text = "",
     apikey = "",
     server = "",
-    port = 5757,
+    port = 5656,
     domain = "",
     local = FALSE,
     bareun = TRUE,
@@ -426,11 +426,16 @@ verbs <- function(tagged = NULL, text = "") {
 #' @importFrom httr GET add_headers content
 .rest_get_dic <- function(host, apikey, name = "") {
   if (name == "") {
-    url <- paste("http://", host, "/bareun/api/v1/customdict", sep = "")
+    url <- paste("http://", host, "/bareun.CustomDictionaryService/GetCustomDictionaryList", sep = "")
+    body <- list()
   } else {
-    url <- paste("http://", host, "/bareun/api/v1/customdict/", name, sep = "")
+    url <- paste("http://", host, "/bareun.CustomDictionaryService/GetCustomDictionary", sep = "")
+    body <- list(domain_name = name)
   }
-  r <- GET(url, config = add_headers("api-key" = apikey), encode = "json")
+
+  r <- POST(url, config = add_headers("api-key" = get_key(),
+      "Content-Type" = "application/json"),
+      body = body, encode = "json")
   content(r)
 }
 
@@ -579,7 +584,7 @@ build_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
 make_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
   dict <- build_custom_dict(tagged, domain, nps, cps, carets, vvs, vas)
   url <- paste("http://", tagged$host,
-      "/bareun/api/v1/customdict/", domain, sep = "")
+      "/bareun.CustomDictionaryService/UpdateCustomDictionary", sep = "")
   body <- list(domain_name = domain, dict = dict)
   r <- POST(url, config = add_headers("api-key" = get_key(),
       "Content-Type" = "application/json"),
@@ -605,9 +610,10 @@ make_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
 #' @export
 remove_custom_dict <- function(tagged, names) {
   url <- paste("http://", tagged$host,
-      "/bareun/api/v1/customdict/delete", sep = "")
+      "/bareun.CustomDictionaryService/RemoveCustomDictionaries", sep = "")
   body <- list(domain_names = names)
-  r <- POST(url, config = add_headers("api-key" = get_key()),
+  r <- POST(url, config = add_headers("api-key" = get_key(),
+      "Content-Type" = "application/json"),
       body = body, encode = "json")
   res <- content(r)
   for (d in as.list(res)$deleted) {

@@ -4,14 +4,14 @@
 \alias{set_api}
 \title{save api config}
 \usage{
-set_api(apikey, server = "localhost", port = 5757, api = "rest")
+set_api(apikey, server = "localhost", port = 5656, api = "rest")
 }
 \arguments{
 \item{apikey}{string - bareun user's api key}
 
 \item{server}{string - bareun api server name or ip}
 
-\item{port}{number - bareun api server port (default: 5757)}
+\item{port}{number - bareun api server port (default: 5656)}
 
 \item{api}{string - api type (rest or grpc)}
 }

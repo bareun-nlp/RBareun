@@ -8,7 +8,7 @@ tagger(
   text = "",
   apikey = "",
   server = "",
-  port = 5757,
+  port = 5656,
   domain = "",
   local = FALSE,
   bareun = TRUE,
