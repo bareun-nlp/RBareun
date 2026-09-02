@@ -21,7 +21,11 @@ returns array of words 'morpheme/tag'
 }
 }
 \examples{
-> pos(, "결과를 문자열로 바꾼다.")
-[[1]]
-[1] "결과/NNG"   "를/JKO"     "문자열/NNG" "로/JKB"     "바꾸/VV"    "ㄴ다/EF"    "./SF"
+\dontrun{
+pos(text = "결과를 문자열로 바꾼다.")
+}
+
+# 결과 예시:
+# [[1]]
+# [1] "결과/NNG" "를/JKO" "문자열/NNG" "로/JKB" "바꾸/VV" "ㄴ다/EF" "./SF"
 }

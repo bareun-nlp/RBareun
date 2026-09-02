@@ -23,14 +23,18 @@ returns array of lists for (morpheme, tag)
 }
 }
 \examples{
-> postag(, "결과를 문자열로 바꾼다.", TRUE)
-[[1]]
-     [,1]     [,2]
-[1,] "결과"   "NNG"
-[2,] "를"     "JKO"
-[3,] "문자열" "NNG"
-[4,] "로"     "JKB"
-[5,] "바꾸"   "VV"
-[6,] "ㄴ다"   "EF"
-[7,] "."      "SF"
+\dontrun{
+postag(text = "결과를 문자열로 바꾼다.", matrix = TRUE)
+}
+
+# 결과 예시:
+# [[1]]
+#      [,1]     [,2]
+# [1,] "결과"   "NNG"
+# [2,] "를"     "JKO"
+# [3,] "문자열" "NNG"
+# [4,] "로"     "JKB"
+# [5,] "바꾸"   "VV"
+# [6,] "ㄴ다"   "EF"
+# [7,] "."      "SF"
 }

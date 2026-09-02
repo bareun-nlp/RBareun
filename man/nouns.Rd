@@ -21,7 +21,11 @@ returns array of list for nouns
 }
 }
 \examples{
-> nouns(, "결과를 문자열로 바꾼다.")
-[[1]]
-[1] "결과"   "문자열"
+\dontrun{
+nouns(text = "결과를 문자열로 바꾼다.")
+}
+
+# 결과 예시:
+# [[1]]
+# [1] "결과" "문자열"
 }

@@ -9,7 +9,7 @@ remove_custom_dict(tagged, names)
 \arguments{
 \item{tagged}{Bareun tagger result}
 
-\item{name}{name of custom dictionary}
+\item{names}{names of custom dictionaries to remove}
 }
 \value{
 print results
