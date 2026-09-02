@@ -1,0 +1,5 @@
+^bareun\.Rcheck$
+^bareun_.*\.tar\.gz$
+^\.github$
+^samples$
+^LICENSE\.md$

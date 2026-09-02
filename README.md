@@ -6,10 +6,8 @@
 ## Install
 
 ```
-install.packagas('devtools')
-install.packages('curl')
-install.packages('httr')
-install.packages('rjson')
+install.packages('devtools')
+install.packages(c('curl', 'httr', 'jsonlite'))
 devtools::install_github("bareun-nlp/RBareun")
 ```
 
@@ -33,6 +31,15 @@ devtools::install_github("bareun-nlp/RBareun")
 - get_key: API-KEY 보기
 - set_server: 서버 설정
 - set_api: API-KEY, 서버 설정
+
+교정·의미 구분·사전 검색 (맞춤법 교정 빌드의 서버에서만 동작합니다)
+
+- correct_grammar: 맞춤법·띄어쓰기 교정
+- revised_text: 교정된 문장 꺼내기
+- revisions: 무엇이 어떻게 바뀌었는지 표로 보기
+- senses: 동형이의어 의미 구분(WSD) 결과 표로 보기
+- search_dict: 우리말샘 사전을 자소 패턴으로 검색
+- dict_words: 검색 결과에서 표제어만 꺼내기
 
 ## Usage
 
@@ -126,5 +133,89 @@ make_custom_dict(t, "sample", np, cp, caret, vv, va)
 | **자유여행**으로 갈겁니다 | [1,] "자유"   "NNG"<br>[2,] "여행"   "NNG"<br>[3,] "으로"   "JKB"<br>[4,] "가"     "VV"<br>[5,] "ㄹ"     "ETM"<br>[6,] "거"     "NNB"<br>[7,] "이"     "VCP"<br>[8,] "ㅂ니다" "EF" | [1,] <b>"자유여행" "NNG"</b><br>[2,] "으로"     "JKB"<br>[3,] "가"       "VV"<br>[4,] "ㄹ"       "ETM"<br>[5,] "거"       "NNB"<br>[6,] "이"       "VCP"<br>[7,] "ㅂ니다"   "EF"| '자유여행'이 복합명사로 한 단어처럼 처리 |
 | 이따가 **카톡해**라 | [1,] "이따가" "MAG"<br>[2,] "카톡"   "NNP"<br>[3,] "하"     "VV"<br>[4,] "아라"   "EF"<br> | [1,] "이따가" "MAG"<br>[2,] <b>"카톡하" "VV"</b><br>[3,] "아라"   "EF"<br> | '카톡하다'가 '카톡(명사)+하'가 아니라 동사로 처리 |
 
+
+## Example / 맞춤법 교정
+
+```
+r <- correct_grammar("이거 안되요. 학교에 갔읍니다.")
+revised_text(r)
+
+[1] "이거 안되요. 학교에 갔습니다."
+
+revisions(r)
+
+     origin   revised category            help
+1 갔읍니다. 갔습니다. STANDARD STANDARD-읍니다
+```
+
+사용자 사전을 함께 쓰려면 이름을 넘깁니다. 여럿을 주면 앞에 온 것이 우선합니다.
+
+```
+correct_grammar("문장", custom_dict_names = c("sample"))
+```
+
+## Example / 동형이의어 의미 구분
+
+같은 글자가 여러 뜻을 가질 때 어느 뜻인지 골라 줍니다. `with_sense = TRUE` 로 분석한
+결과에만 값이 들어 있고, 서버에 WSD 모델이 실려 있어야 합니다.
+
+```
+t <- tagger("나는 밤에 밤을 먹었다.", with_sense = TRUE)
+senses(t)
+
+  sentence morph tag sense_no meaning                       probability
+1        1    밤 NNG        2 밤나무의 열매. ...              0.5513565
+2        1    밤 NNG        2 밤나무의 열매. ...              0.7676746
+3        1    먹  VV        2 음식 따위를 입을 통하여 ...     0.9777783
+```
+
+## Example / 우리말샘 사전 검색
+
+완성형 한글로는 "초성이 ㅅ 이고 종성이 ㄴ 인 음절" 같은 조건을 쓸 수 없습니다.
+자소 슬롯 패턴으로 찾습니다.
+
+```
+dict_words(search_dict("{ㅅ//ㄴ}다", pos = "동사"))
+
+[1] "신다"
+
+dict_words(search_dict("아지", anchor = "suffix", limit = 5))
+
+[1] "아지"   "가아지" "강아지" "개아지" "갱아지"
+```
+
+패턴 문법은 이렇습니다.
+
+| 표기 | 뜻 |
+| --- | --- |
+| `다` | 그 음절 그대로 |
+| `{초/중/종}` | 한 음절의 자소 조건. 비우거나 `.` 이면 아무거나 |
+| `-` (종성 자리) | 받침 없음 |
+| `+` (종성 자리) | 받침 있음 |
+| `*` | 음절 0개 이상 |
+| `?` | 음절 정확히 1개 |
+
+`anchor` 는 `word`(기본)·`prefix`·`suffix`·`contains` 중에 고릅니다.
+
+## 오류 처리
+
+서버 호출이 실패하면 종류를 구분할 수 있는 조건(condition)이 올라옵니다.
+
+| 클래스 | 언제 |
+| --- | --- |
+| `bareun_connection_error` | 서버에 닿지 못함 (주소 오타·미기동·방화벽) |
+| `bareun_auth_error` | API 키가 없거나 유효하지 않음, 라이선스 만료 |
+| `bareun_unimplemented_error` | 그 서버가 제공하지 않는 서비스 (교정 빌드가 아님) |
+| `bareun_server_error` | 서버 내부 오류 (5xx) |
+| `bareun_request_error` | 그 밖의 4xx |
+| `bareun_argument_error` | 인자가 잘못됨. 서버를 부르기 전에 걸린다 |
+
+```
+tryCatch(
+  correct_grammar("문장"),
+  bareun_auth_error = function(e) message("API 키를 확인하세요"),
+  bareun_connection_error = function(e) message("서버 주소를 확인하세요")
+)
+```
 
 by [bareun.ai](https://bareun.ai) = [baikal.ai](https://baikal.ai) X [Korea Press Foundation](https://bigkinds.or.kr)

@@ -8,6 +8,8 @@ as_json_string(tagged, pretty = FALSE)
 }
 \arguments{
 \item{tagged}{Bareun tagger result}
+
+\item{pretty}{bool - TRUE 면 들여쓰기해서 읽기 좋게 만든다}
 }
 \value{
 returns JSON string

@@ -12,7 +12,11 @@ tagger(
   domain = "",
   local = FALSE,
   bareun = TRUE,
-  api = ""
+  auto_spacing = TRUE,
+  auto_jointing = TRUE,
+  api = "",
+  with_sense = FALSE,
+  custom_dict_names = character(0)
 )
 }
 \arguments{
@@ -27,6 +31,20 @@ tagger(
 \item{domain}{string - custom domain (custom dictionary)}
 
 \item{local}{bool - use local protobuf files, if TRUE}
+
+\item{bareun}{bool - 결과를 바른 형식으로 다룬다}
+
+\item{auto_spacing}{bool - 자동 띄어쓰기}
+
+\item{auto_jointing}{bool - 자동 붙여쓰기}
+
+\item{api}{string - api type (rest). 비우면 set_server() 값을 쓴다}
+
+\item{with_sense}{bool - 동형이의어 의미 구분(WSD) 결과를 함께 받는다.
+서버에 WSD 모델이 실려 있을 때만 형태소에 sense 가 붙는다. 추론이 한 번 더 돈다.}
+
+\item{custom_dict_names}{character - 사용할 사용자 사전 이름들.
+여럿을 주면 앞에 온 것이 우선한다. domain 인자보다 이쪽이 우선한다.}
 }
 \value{
 returns tagged object
@@ -37,5 +55,8 @@ returns tagged object
 }
 }
 \examples{
+\dontrun{
+set_api("koba-YOUR-KEY", "localhost", 5656)
 tagged <- tagger("결과를 문자열로 바꾼다.")
+}
 }

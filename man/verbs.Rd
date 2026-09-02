@@ -21,7 +21,11 @@ returns array of list for verbs
 }
 }
 \examples{
-> verbs(, "결과를 문자열로 바꾼다.")
-[[1]]
-[1] "바꾸"
+\dontrun{
+verbs(text = "결과를 문자열로 바꾼다.")
+}
+
+# 결과 예시:
+# [[1]]
+# [1] "바꾸"
 }

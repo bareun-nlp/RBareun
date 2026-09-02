@@ -1,9 +1,5 @@
 # package bareun: Bareun R client
 
-library(curl)
-library(httr)
-library(jsonlite)
-
 tag_labels <- c("EC", "EF", "EP", "ETM", "ETN", "IC",
                 "JC", "JKB", "JKC", "JKG", "JKO", "JKQ", "JKS", "JKV", "JX",
                 "MAG", "MAJ", "MMA", "MMD", "MMN",
@@ -45,10 +41,12 @@ set_server <- function(host = "localhost:5656", api = "rest") {
 #' @export
 get_server <- function() {
   svr <- list(host = barenv$host, api = barenv$api)
-  if (svr$host == "") {
+  # set_server() 를 한 번도 부르지 않았으면 값이 NULL 이다. NULL 과 "" 를 비교하면
+  # 길이 0 의 조건이 되어 오류로 죽으므로, 두 경우를 함께 기본값으로 돌린다.
+  if (is.null(svr$host) || !nzchar(svr$host)) {
     svr$host <- "localhost:5656"
   }
-  if (svr$api == "") {
+  if (is.null(svr$api) || !nzchar(svr$api)) {
     svr$api <- "rest"
   }
   svr
@@ -71,17 +69,19 @@ set_api <- function(apikey, server = "localhost", port = 5656, api = "rest") {
   c("api-key", apikey)
 }
 
-#' @importFrom httr POST add_headers content
 .rest_analyze_text <- function(text, host, custom_domain,
-    auto_spacing, auto_jointing, apikey) {
-  url <- paste("http://", host, "/bareun.LanguageService/AnalyzeSyntax", sep = "")
+    auto_spacing, auto_jointing, apikey,
+    with_sense = FALSE, custom_dict_names = character(0)) {
   doc <- list(content = text, language = "ko_KR")
   body <- list(document = doc, encoding_type = "UTF8",
     auto_spacing = auto_spacing, auto_jointing = auto_jointing,
-    custom_domain = custom_domain)
-  r <- POST(url, config = add_headers("api-key" = apikey),
-    body = body, encode = "json")
-  content(r)
+    custom_domain = custom_domain,
+    with_sense = with_sense)
+  # 빈 벡터를 그대로 넣으면 JSON 에서 {} 가 되어 서버가 거부한다. 값이 있을 때만 싣는다.
+  if (length(custom_dict_names) > 0) {
+    body$custom_dict_names <- as.list(custom_dict_names)
+  }
+  .rest_post(host, "LanguageService", "AnalyzeSyntax", body, apikey)
 }
 
 #' Call Bareun server to read postag result message for the sentences
@@ -94,9 +94,20 @@ set_api <- function(apikey, server = "localhost", port = 5656, api = "rest") {
 #' @param port number - Bareun server port
 #' @param domain string - custom domain (custom dictionary)
 #' @param local bool - use local protobuf files, if TRUE
+#' @param bareun bool - 결과를 바른 형식으로 다룬다
+#' @param auto_spacing bool - 자동 띄어쓰기
+#' @param auto_jointing bool - 자동 붙여쓰기
+#' @param api string - api type (rest). 비우면 set_server() 값을 쓴다
+#' @param with_sense bool - 동형이의어 의미 구분(WSD) 결과를 함께 받는다.
+#'   서버에 WSD 모델이 실려 있을 때만 형태소에 sense 가 붙는다. 추론이 한 번 더 돈다.
+#' @param custom_dict_names character - 사용할 사용자 사전 이름들.
+#'   여럿을 주면 앞에 온 것이 우선한다. domain 인자보다 이쪽이 우선한다.
 #' @return returns tagged object
 #' @examples
+#' \dontrun{
+#' set_api("koba-YOUR-KEY", "localhost", 5656)
 #' tagged <- tagger("결과를 문자열로 바꾼다.")
+#' }
 #' @importFrom curl nslookup
 #' @export
 tagger <- function(text = "",
@@ -108,7 +119,9 @@ tagger <- function(text = "",
     bareun = TRUE,
     auto_spacing = TRUE,
     auto_jointing = TRUE,
-    api = "") {
+    api = "",
+    with_sense = FALSE,
+    custom_dict_names = character(0)) {
   # host
   if (server == "") {
     host <- get_server()$host
@@ -132,7 +145,8 @@ tagger <- function(text = "",
   auto_jointing <- auto_jointing
   if (text != "") {
     response <- .rest_analyze_text(text, host, custom_domain,
-      auto_spacing, auto_jointing, apikey)
+      auto_spacing, auto_jointing, apikey,
+      with_sense, custom_dict_names)
   }
   tagged <- list(text = text,
     result = response,
@@ -145,6 +159,8 @@ tagger <- function(text = "",
     dict_proto = dict_proto,
     auto_spacing = auto_spacing,
     auto_jointing = auto_jointing,
+    with_sense = with_sense,
+    custom_dict_names = custom_dict_names,
     bareun = bareun
   )
   class(tagged) <- "tagged"
@@ -156,6 +172,7 @@ tagger <- function(text = "",
 #' - 결과를 JSON 문자열로 출력
 #'
 #' @param tagged Bareun tagger result
+#' @param pretty bool - TRUE 면 들여쓰기해서 읽기 좋게 만든다
 #' @return returns JSON string
 #' @importFrom jsonlite toJSON
 #' @export
@@ -248,16 +265,20 @@ analyze_text <- function(tagged, text) {
 #' @param matrix if TRUE, result output to matrix not list (default = FALSE)
 #' @return returns array of lists for (morpheme, tag)
 #' @examples
-#' > postag(, "결과를 문자열로 바꾼다.", TRUE)
-#' [[1]]
-#'      [,1]     [,2]
-#' [1,] "결과"   "NNG"
-#' [2,] "를"     "JKO"
-#' [3,] "문자열" "NNG"
-#' [4,] "로"     "JKB"
-#' [5,] "바꾸"   "VV"
-#' [6,] "ㄴ다"   "EF"
-#' [7,] "."      "SF"
+#' \dontrun{
+#' postag(text = "결과를 문자열로 바꾼다.", matrix = TRUE)
+#' }
+#'
+#' # 결과 예시:
+#' # [[1]]
+#' #      [,1]     [,2]
+#' # [1,] "결과"   "NNG"
+#' # [2,] "를"     "JKO"
+#' # [3,] "문자열" "NNG"
+#' # [4,] "로"     "JKB"
+#' # [5,] "바꾸"   "VV"
+#' # [6,] "ㄴ다"   "EF"
+#' # [7,] "."      "SF"
 #' @export
 postag <- function(tagged = NULL, text = "", matrix = FALSE) {
   dup <- tagged
@@ -298,9 +319,13 @@ postag <- function(tagged = NULL, text = "", matrix = FALSE) {
 #' @param text input text
 #' @return returns array of words 'morpheme/tag'
 #' @examples
-#' > pos(, "결과를 문자열로 바꾼다.")
-#' [[1]]
-#' [1] "결과/NNG"   "를/JKO"     "문자열/NNG" "로/JKB"     "바꾸/VV"    "ㄴ다/EF"    "./SF"
+#' \dontrun{
+#' pos(text = "결과를 문자열로 바꾼다.")
+#' }
+#'
+#' # 결과 예시:
+#' # [[1]]
+#' # [1] "결과/NNG" "를/JKO" "문자열/NNG" "로/JKB" "바꾸/VV" "ㄴ다/EF" "./SF"
 #' @export
 pos <- function(tagged = NULL, text = "") {
   l <- postag(tagged, text, FALSE)
@@ -326,9 +351,13 @@ pos <- function(tagged = NULL, text = "") {
 #' @param text input text
 #' @return returns array of list for morphemes
 #' @examples
-#' > morphs(, "결과를 문자열로 바꾼다.")
-#' [[1]]
-#' [1] "결과"   "를"     "문자열" "로"     "바꾸"   "ㄴ다"   "."
+#' \dontrun{
+#' morphs(text = "결과를 문자열로 바꾼다.")
+#' }
+#'
+#' # 결과 예시:
+#' # [[1]]
+#' # [1] "결과" "를" "문자열" "로" "바꾸" "ㄴ다" "."
 #' @export
 morphs <- function(tagged = NULL, text = "") {
   dup <- tagged
@@ -370,9 +399,13 @@ morphs <- function(tagged = NULL, text = "") {
 #' @param text input text
 #' @return returns array of list for nouns
 #' @examples
-#' > nouns(, "결과를 문자열로 바꾼다.")
-#' [[1]]
-#' [1] "결과"   "문자열"
+#' \dontrun{
+#' nouns(text = "결과를 문자열로 바꾼다.")
+#' }
+#'
+#' # 결과 예시:
+#' # [[1]]
+#' # [1] "결과" "문자열"
 #' @export
 nouns <- function(tagged = NULL, text = "") {
   dup <- tagged
@@ -400,9 +433,13 @@ nouns <- function(tagged = NULL, text = "") {
 #' @param text input text
 #' @return returns array of list for verbs
 #' @examples
-#' > verbs(, "결과를 문자열로 바꾼다.")
-#' [[1]]
-#' [1] "바꾸"
+#' \dontrun{
+#' verbs(text = "결과를 문자열로 바꾼다.")
+#' }
+#'
+#' # 결과 예시:
+#' # [[1]]
+#' # [1] "바꾸"
 #' @export
 verbs <- function(tagged = NULL, text = "") {
   dup <- tagged
@@ -604,7 +641,7 @@ make_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
 #' - 사용자 사전(들)을 삭제
 #'
 #' @param tagged Bareun tagger result
-#' @param name name of custom dictionary
+#' @param names names of custom dictionaries to remove
 #' @return print results
 #' @importFrom httr POST add_headers content
 #' @export
