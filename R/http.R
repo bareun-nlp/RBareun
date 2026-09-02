@@ -30,7 +30,7 @@
     error = function(e) {
       .bareun_stop(
         c("bareun_connection_error", "bareun_error"),
-        paste0("바른 서버에 접속하지 못했습니다 (", host, "): ", conditionMessage(e))
+        .m("conn_failed", host, conditionMessage(e))
       )
     }
   )
@@ -58,12 +58,11 @@
   }
 
   msg <- if (code == 401 || code == 403) {
-    "API 키가 유효하지 않거나 라이선스가 만료되었습니다."
+    .m("auth_invalid")
   } else if (code == 501) {
-    paste0("이 서버는 bareun.", service, " 를 제공하지 않습니다. ",
-           "교정·사전 검색은 맞춤법 교정(rev) 빌드에서만 동작합니다.")
+    .m("unimplemented", service)
   } else {
-    paste0("바른 서버가 오류를 돌려주었습니다 (HTTP ", code, ")")
+    .m("http_error", code)
   }
   if (nzchar(detail)) msg <- paste0(msg, ": ", detail)
 
@@ -113,7 +112,7 @@
   }
   if (is.null(apikey) || !nzchar(apikey)) {
     .bareun_stop(c("bareun_auth_error", "bareun_error"),
-      "API 키가 없습니다. set_key() 또는 set_api() 로 먼저 지정하세요.")
+      .m("no_key"))
   }
 
   list(host = host, apikey = apikey)

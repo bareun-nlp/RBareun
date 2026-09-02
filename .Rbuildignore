@@ -2,4 +2,6 @@
 ^bareun_.*\.tar\.gz$
 ^\.github$
 ^samples$
+^tools$
+^INSTALL\.md$
 ^LICENSE\.md$

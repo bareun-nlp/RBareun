@@ -49,7 +49,7 @@ search_dict <- function(pattern,
     port = 5656) {
   if (!is.character(pattern) || length(pattern) != 1 || !nzchar(pattern)) {
     .bareun_stop(c("bareun_argument_error", "bareun_error"),
-      "pattern 은 비어 있지 않은 문자열 하나여야 합니다.")
+      .m("need_pattern"))
   }
 
   body <- list(
@@ -105,5 +105,5 @@ dict_words <- function(result) {
     return(as.character(anchor)[1])
   }
   .bareun_stop(c("bareun_argument_error", "bareun_error"),
-    paste0("anchor 는 word·prefix·suffix·contains 중 하나여야 합니다: ", anchor))
+    .m("bad_anchor", anchor))
 }

@@ -545,15 +545,15 @@ get_set <- function(tagged, set_name) {
 #' @return prints all contents of all sets
 #' @export
 print_dict_all <- function(tagged) {
-  print("-> 고유명사 사전")
+  print(.m("dict_np"))
   print(get_set(tagged, "np"))
-  print("-> 복합명사 사전")
+  print(.m("dict_cp"))
   print(get_set(tagged, "cp"))
-  print("-> 분리 사전")
+  print(.m("dict_caret"))
   print(get_set(tagged, "caret"))
-  print("-> 동사 사전")
+  print(.m("dict_vv"))
   print(get_set(tagged, "vv"))
-  print("-> 형용사 사전")
+  print(.m("dict_va"))
   print(get_set(tagged, "va"))
 }
 
@@ -629,7 +629,7 @@ make_custom_dict <- function(tagged, domain, nps, cps, carets, vvs, vas) {
   res <- content(r, preserve_proto_field_names = TRUE, encoding = "UTF-8")
   if (r$status_code == 200) {
     if (res$updated == domain) {
-      print(paste(domain, ": 업데이트 성공"))
+      print(.m("dict_updated", domain))
     }
   } else {
     print(res)
