@@ -38,7 +38,7 @@ correct_grammar <- function(text,
     enable_sentence_check = FALSE) {
   if (!is.character(text) || length(text) != 1 || !nzchar(text)) {
     .bareun_stop(c("bareun_argument_error", "bareun_error"),
-      "text 는 비어 있지 않은 문자열 하나여야 합니다.")
+      .m("need_text"))
   }
   conn <- .resolve_conn(NULL, apikey, server, port)
 
