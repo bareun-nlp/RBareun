@@ -22,6 +22,9 @@ MESSAGES = [
     ("dict_vv",       "-> 동사 사전"),
     ("dict_va",       "-> 형용사 사전"),
     ("dict_updated",  "%s : 업데이트 성공"),
+    ("need_session",  "session 은 open_session() 이 돌려준 세션이어야 합니다."),
+    ("session_no_id",  "서버가 세션 ID 를 돌려주지 않았습니다."),
+    ("session_error",  "교정 세션 오류 (%s)"),
     ("truncated",     "요청 글이 길어 앞 %s자만 처리했습니다. 뒤 %s자는 처리하지 않았습니다(전체 %s자)."),
 ]
 

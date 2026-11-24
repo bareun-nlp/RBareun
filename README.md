@@ -39,6 +39,8 @@ devtools::install_github("bareun-nlp/RBareun")
 - revisions: 무엇이 어떻게 바뀌었는지 표로 보기
 - truncation: 긴 글이 잘렸을 때 처리한 글자 수·버린 글자 수 보기
 - is_truncated: 응답이 잘렸는지 확인
+- open_session·close_session: 긴 문서를 나눠 교정할 세션 열고 닫기
+- session_revision·session_events: 세션이 새로 확정한 단어 확인
 - senses: 동형이의어 의미 구분(WSD) 결과 표로 보기
 - search_dict: 우리말샘 사전을 자소 패턴으로 검색
 - dict_words: 검색 결과에서 표제어만 꺼내기
@@ -201,17 +203,19 @@ dict_words(search_dict("아지", anchor = "suffix", limit = 5))
 
 ## 긴 글
 
-한 번에 보내는 글이 서버 기준(바른 클라우드 API 는 9,000자)을 넘으면 서버가 거절하지
-않고 앞부분(약 5,000자, 문장 끝이나 공백에서 끊음)만 처리합니다. 9,000자까지는 전부
-처리하고, 9,001자부터 자릅니다. 자체 서버는 기준을 두지 않을 수도 있습니다.
+바른 엔진 자체에는 글자 수 제약이 없지만, 클라우드 서비스(api.bareun.ai)는 용량 때문에 요청 한 번에 처리하는 양을 5,000자로 둡니다. 5,000자를 넘는 글은 앞부분만 처리하고 응답의 `truncation` 필드에 알리므로, 5,000자 이하로 나눠 보내 주세요. 이 기준은 운영 상황에 따라 바뀔 수 있으니 숫자를 코드에 박지 말고 `truncation` 의 `processed_chars`·`dropped_chars` 로 판단하세요.
+설치형(자체 서버)은 기본 제한이 없고, 서버 설정(`requestCharLimit`)으로 바꿀 수 있습니다.
+
+맞춤법 교정은 긴 글을 세션으로 나눠 보내는 방법이 있습니다. 아래 "긴 문서는 세션으로 나눠
+보내기" 를 보세요.
 
 잘리면 R 이 `bareun_truncated_warning` 경고를 올리고, `truncation()` 으로 자세한 값을
 읽을 수 있습니다. 기존 함수의 반환값은 그대로입니다. 결과 안의 위치는 모두 보낸 글의
 처음 기준이고, 뒷부분은 결과에 들어 있지 않습니다.
 
 ```
-r <- correct_grammar(long_text)   # 9,001자 이상
-# Warning: 요청 글이 너무 길어 앞 4991자만 처리했습니다. 뒤 4010자는 처리하지 않았습니다 ...
+r <- correct_grammar(long_text)   # 5,001자 이상
+# Warning: 요청 글이 너무 길어 앞 4991자만 처리했습니다. 뒤 N자는 처리하지 않았습니다 ...
 
 is_truncated(r)
 [1] TRUE
@@ -235,6 +239,54 @@ rest <- substring(long_text, truncation(r)$processed_chars + 1)
 `suppressWarnings()` 나 `withCallingHandlers()` 로 `bareun_truncated_warning` 만
 받아 처리하세요.
 
+## 긴 문서는 세션으로 나눠 보내기
+
+바른 엔진 자체에는 글자 수 제약이 없지만, 클라우드 서비스(api.bareun.ai)는 용량 때문에 요청 한 번에 처리하는 양을 5,000자로 둡니다. 5,000자를 넘는 글은 앞부분만 처리하고 응답의 `truncation` 필드에 알리므로, 긴 글은 세션(`OpenSession`, `CloseSession`)을 열고 문단 단위로 5,000자 이하씩 보내 주세요(세션 안의 요청은 한 문서로 이어져 처리되고, 5,000자 기준은 각 요청에 똑같이 걸립니다). 이 기준은 운영 상황에 따라 바뀔 수 있으니 숫자를 코드에 박지 말고 `truncation` 의 `processed_chars`·`dropped_chars` 로 판단하세요. 짧은 문단 요청은 서버가 한 번에 쓰는 메모리와 시간이 작아 긴 한 요청보다 안정되게 처리되며, 이는 서버 처리 부담에 관한 설명이고 요금이 달라진다는 뜻은 아닙니다.
+
+R 에서는 `open_session()` 에서 사용자 사전과 교정 옵션을 한 번 정하고, 세션 호출에서는
+`correct_grammar()` 에 준 `custom_dict_names` 와 옵션이 무시됩니다(세션을 열 때 정한 값이 쓰입니다).
+숫자는 바뀔 수 있으니 위 "긴 글" 절처럼 `truncation()` 으로 판단하세요. 세션은 맞춤법 교정에만 있고 형태소 분석(`tagger()`)에는 없습니다.
+
+```
+s <- open_session(custom_dict_names = c("sample"))
+
+paragraphs <- strsplit(long_text, "\n")[[1]]
+out <- character(0)
+for (p in paragraphs[nzchar(paragraphs)]) {
+  r <- correct_grammar(p, session = s)
+  out <- c(out, revised_text(r))
+}
+
+close_session(s)       # 호출하지 않아도 서버가 유휴 10분, 최대 1시간 뒤에 닫습니다
+```
+
+세션은 열 때 쓴 API 키로만 쓸 수 있고, 동시에 열 수 있는 수에 상한이 있습니다.
+다 쓰면 닫아서 상한을 돌려받으세요.
+
+- `session_revision(r)`: 그 결과를 만든 시점의 세션 개정 번호(세션 없이 교정했으면 `NA`).
+  번호가 오르면 세션이 새 단어를 확정한 것이라 앞 결과가 달라졌을 수 있습니다.
+- `session_events(s, since_revision = 이전번호)`: 무엇이 확정됐는지 `revision`, `kind`, `word` 표로 받습니다.
+
+세션 오류는 `bareun_session_error` 조건으로 올라오고, `e$reason` 으로 가릅니다.
+
+| reason | 뜻 | 할 일 |
+| --- | --- | --- |
+| `SESSION_NOT_FOUND` | 서버가 모르는 세션(닫음, 서버 재시작) | `open_session()` 을 다시 하고 필요한 앞부분부터 다시 보냄 |
+| `SESSION_EXPIRED` | 수명(유휴 10분, 최대 1시간)이 다함 | 위와 같음 |
+| `SESSION_STORE_UNAVAILABLE` | 서버가 세션 저장소에 닿지 못함 | 세션을 다시 열지 말고 잠시 뒤 다시 하거나, 세션 없이 보냄 |
+
+```
+tryCatch(
+  correct_grammar(p, session = s),
+  bareun_session_error = function(e) {
+    if (e$reason %in% c("SESSION_NOT_FOUND", "SESSION_EXPIRED")) {
+      s <<- open_session()
+    }
+    stop(e)
+  }
+)
+```
+
 ## 오류 처리
 
 서버 호출이 실패하면 종류를 구분할 수 있는 조건(condition)이 올라옵니다.
@@ -246,6 +298,7 @@ rest <- substring(long_text, truncation(r)$processed_chars + 1)
 | `bareun_unimplemented_error` | 그 서버가 제공하지 않는 서비스 (교정 빌드가 아님) |
 | `bareun_server_error` | 서버 내부 오류 (5xx) |
 | `bareun_request_error` | 그 밖의 4xx |
+| `bareun_session_error` | 교정 세션 오류. `e$reason` 으로 가름(위 "세션" 절) |
 | `bareun_argument_error` | 인자가 잘못됨. 서버를 부르기 전에 걸린다 |
 
 ```
