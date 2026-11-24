@@ -37,6 +37,8 @@ devtools::install_github("bareun-nlp/RBareun")
 - correct_grammar: 맞춤법·띄어쓰기 교정
 - revised_text: 교정된 문장 꺼내기
 - revisions: 무엇이 어떻게 바뀌었는지 표로 보기
+- truncation: 긴 글이 잘렸을 때 처리한 글자 수·버린 글자 수 보기
+- is_truncated: 응답이 잘렸는지 확인
 - senses: 동형이의어 의미 구분(WSD) 결과 표로 보기
 - search_dict: 우리말샘 사전을 자소 패턴으로 검색
 - dict_words: 검색 결과에서 표제어만 꺼내기
@@ -196,6 +198,42 @@ dict_words(search_dict("아지", anchor = "suffix", limit = 5))
 | `?` | 음절 정확히 1개 |
 
 `anchor` 는 `word`(기본)·`prefix`·`suffix`·`contains` 중에 고릅니다.
+
+## 긴 글
+
+한 번에 보내는 글이 서버 기준(바른 클라우드 API 는 9,000자)을 넘으면 서버가 거절하지
+않고 앞부분(약 5,000자, 문장 끝이나 공백에서 끊음)만 처리합니다. 9,000자까지는 전부
+처리하고, 9,001자부터 자릅니다. 자체 서버는 기준을 두지 않을 수도 있습니다.
+
+잘리면 R 이 `bareun_truncated_warning` 경고를 올리고, `truncation()` 으로 자세한 값을
+읽을 수 있습니다. 기존 함수의 반환값은 그대로입니다. 결과 안의 위치는 모두 보낸 글의
+처음 기준이고, 뒷부분은 결과에 들어 있지 않습니다.
+
+```
+r <- correct_grammar(long_text)   # 9,001자 이상
+# Warning: 요청 글이 너무 길어 앞 4991자만 처리했습니다. 뒤 4010자는 처리하지 않았습니다 ...
+
+is_truncated(r)
+[1] TRUE
+
+tr <- truncation(r)
+tr$original_chars         # 보낸 글자 수
+tr$processed_chars        # 처리한 글자 수
+tr$dropped_chars          # 버린 글자 수
+tr$dropped_begin_offset   # 버린 구간의 시작 위치(UTF8 바이트)
+tr$message                # 서버의 안내 문구
+tr$cut_mid_word           # 글자 중간에서 끊었는지
+```
+
+뒷부분까지 처리하려면 처리한 글자 수만큼 떼어 내고 나머지를 다시 보냅니다.
+
+```
+rest <- substring(long_text, truncation(r)$processed_chars + 1)
+```
+
+`tagger()`·`analyze_text()`·`correct_grammar()` 모두 같습니다. 경고를 끄려면
+`suppressWarnings()` 나 `withCallingHandlers()` 로 `bareun_truncated_warning` 만
+받아 처리하세요.
 
 ## 오류 처리
 

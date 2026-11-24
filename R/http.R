@@ -37,7 +37,8 @@
 
   code <- status_code(r)
   if (code >= 200 && code < 300) {
-    return(content(r))
+    # 긴 요청은 거절되지 않고 앞부분만 처리된다. 그 사실을 조용히 넘기지 않는다.
+    return(.warn_if_truncated(content(r)))
   }
 
   # Connect 는 오류도 JSON 본문으로 돌려준다. 읽을 수 있으면 그 메시지를 쓴다.
