@@ -36,6 +36,12 @@
   dict_va = "-> \uD615\uC6A9\uC0AC \uC0AC\uC804",
   # "%s : 업데이트 성공"
   dict_updated = "%s : \uC5C5\uB370\uC774\uD2B8 \uC131\uACF5",
+  # "session 은 open_session() 이 돌려준 세션이어야 합니다."
+  need_session = "session \uC740 open_session() \uC774 \uB3CC\uB824\uC900 \uC138\uC158\uC774\uC5B4\uC57C \uD569\uB2C8\uB2E4.",
+  # "서버가 세션 ID 를 돌려주지 않았습니다."
+  session_no_id = "\uC11C\uBC84\uAC00 \uC138\uC158 ID \uB97C \uB3CC\uB824\uC8FC\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4.",
+  # "교정 세션 오류 (%s)"
+  session_error = "\uAD50\uC815 \uC138\uC158 \uC624\uB958 (%s)",
   # "요청 글이 길어 앞 %s자만 처리했습니다. 뒤 %s자는 처리하지 않았습니다(전체 %s자)."
   truncated = "\uC694\uCCAD \uAE00\uC774 \uAE38\uC5B4 \uC55E %s\uC790\uB9CC \uCC98\uB9AC\uD588\uC2B5\uB2C8\uB2E4. \uB4A4 %s\uC790\uB294 \uCC98\uB9AC\uD558\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4(\uC804\uCCB4 %s\uC790)."
 )

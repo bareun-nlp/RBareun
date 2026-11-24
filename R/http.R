@@ -42,10 +42,17 @@
   }
 
   # Connect 는 오류도 JSON 본문으로 돌려준다. 읽을 수 있으면 그 메시지를 쓴다.
-  detail <- tryCatch({
-    b <- content(r)
-    if (is.list(b) && !is.null(b$message)) b$message else ""
-  }, error = function(e) "")
+  body <- tryCatch(content(r), error = function(e) NULL)
+  detail <- if (is.list(body) && !is.null(body$message)) body$message else ""
+
+  # 교정 세션 오류(없음·만료·저장소 장애)는 reason 으로 구분해 다시 던진다.
+  reason <- .session_reason(body)
+  if (nzchar(reason)) {
+    .bareun_stop(
+      c("bareun_session_error", "bareun_http_error", "bareun_error"),
+      paste0(.m("session_error", reason), if (nzchar(detail)) paste0(": ", detail) else ""),
+      status = code, service = service, method = method, reason = reason)
+  }
 
   cls <- if (code == 401 || code == 403) {
     c("bareun_auth_error", "bareun_http_error", "bareun_error")
