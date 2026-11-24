@@ -5,7 +5,7 @@ cut_response <- function() {
   list(
     origin = "a",
     truncation = list(
-      originalChars = 9001L, processedChars = 4991L, droppedChars = 4010L,
+      originalChars = 5001L, processedChars = 4991L, droppedChars = 10L,
       droppedBeginOffset = 12287L,
       message = "request too long", cutMidWord = TRUE
     )
@@ -15,9 +15,9 @@ cut_response <- function() {
 test_that("잘린 응답에서 값을 꺼낸다", {
   tr <- truncation(cut_response())
   expect_true(tr$truncated)
-  expect_equal(tr$original_chars, 9001L)
+  expect_equal(tr$original_chars, 5001L)
   expect_equal(tr$processed_chars, 4991L)
-  expect_equal(tr$dropped_chars, 4010L)
+  expect_equal(tr$dropped_chars, 10L)
   expect_equal(tr$dropped_begin_offset, 12287L)
   expect_equal(tr$message, "request too long")
   expect_true(tr$cut_mid_word)
@@ -56,17 +56,17 @@ test_that("잘린 응답은 경고 조건으로 알린다", {
   w <- expect_warning(bareun:::.warn_if_truncated(cut_response()),
     class = "bareun_truncated_warning")
   expect_equal(conditionMessage(w), "request too long")
-  expect_equal(w$truncation$dropped_chars, 4010L)
+  expect_equal(w$truncation$dropped_chars, 10L)
 })
 
 test_that("서버 문구가 없으면 패키지 문구를 쓴다", {
-  r <- list(truncation = list(originalChars = 9001L, processedChars = 5000L,
-    droppedChars = 4001L))
+  r <- list(truncation = list(originalChars = 5731L, processedChars = 5000L,
+    droppedChars = 731L))
   w <- expect_warning(bareun:::.warn_if_truncated(r),
     class = "bareun_truncated_warning")
   expect_match(conditionMessage(w), "5000")
-  expect_match(conditionMessage(w), "4001")
-  expect_match(conditionMessage(w), "9001")
+  expect_match(conditionMessage(w), "731")
+  expect_match(conditionMessage(w), "5731")
 })
 
 test_that("자르지 않은 응답은 경고 없이 그대로 돌려준다", {
