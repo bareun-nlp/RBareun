@@ -35,7 +35,9 @@
   # "-> 형용사 사전"
   dict_va = "-> \uD615\uC6A9\uC0AC \uC0AC\uC804",
   # "%s : 업데이트 성공"
-  dict_updated = "%s : \uC5C5\uB370\uC774\uD2B8 \uC131\uACF5"
+  dict_updated = "%s : \uC5C5\uB370\uC774\uD2B8 \uC131\uACF5",
+  # "요청 글이 길어 앞 %s자만 처리했습니다. 뒤 %s자는 처리하지 않았습니다(전체 %s자)."
+  truncated = "\uC694\uCCAD \uAE00\uC774 \uAE38\uC5B4 \uC55E %s\uC790\uB9CC \uCC98\uB9AC\uD588\uC2B5\uB2C8\uB2E4. \uB4A4 %s\uC790\uB294 \uCC98\uB9AC\uD558\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4(\uC804\uCCB4 %s\uC790)."
 )
 
 #' 메시지를 꺼내 인자를 채운다.
