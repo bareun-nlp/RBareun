@@ -17,6 +17,10 @@
 #' @param disable_typo_correction bool - 오탈자 교정을 끈다
 #' @param disable_confusion bool - 혼동어 판정을 끈다
 #' @param enable_sentence_check bool - 문장 단위 점검을 켠다
+#' @param session open_session() 이 돌려준 세션. 주면 그 세션으로 교정한다.
+#'   긴 글을 여러 번에 나눠 교정할 때 앞 호출에서 본 미등록 단어를 뒤 호출에서
+#'   알려진 말로 쓰게 한다. 이때 서버와 API 키는 세션에 담긴 값을 쓰고,
+#'   custom_dict_names 와 교정 옵션은 **무시**된다(세션을 열 때 정한 값이 쓰인다).
 #' @return returns revised object. `$revised` 에 교정문, `$origin` 에 원문,
 #'   `$revised_blocks` 에 어떤 자리가 왜 바뀌었는지가 들어 있다.
 #' @examples
@@ -35,27 +39,29 @@ correct_grammar <- function(text,
     disable_split_sentence = FALSE,
     disable_typo_correction = FALSE,
     disable_confusion = FALSE,
-    enable_sentence_check = FALSE) {
+    enable_sentence_check = FALSE,
+    session = NULL) {
   if (!is.character(text) || length(text) != 1 || !nzchar(text)) {
     .bareun_stop(c("bareun_argument_error", "bareun_error"),
       .m("need_text"))
   }
-  conn <- .resolve_conn(NULL, apikey, server, port)
+  if (!is.null(session)) .check_session(session)
+  conn <- .resolve_conn(session, apikey, server, port)
 
   body <- list(
     document = list(content = text, language = "ko_KR"),
-    encoding_type = "UTF8",
-    config = list(
-      treat_as_title = treat_as_title,
-      disable_split_sentence = disable_split_sentence,
-      disable_typo_correction = disable_typo_correction,
-      disable_confusion = disable_confusion,
-      enable_sentence_check = enable_sentence_check
-    )
+    encoding_type = "UTF8"
   )
-  # 빈 벡터를 그대로 넣으면 JSON 에서 {} 로 나가 서버가 거부한다. 값이 있을 때만 싣는다.
-  if (length(custom_dict_names) > 0) {
-    body$custom_dict_names <- as.list(custom_dict_names)
+  if (is.null(session)) {
+    body$config <- .revision_config(treat_as_title, disable_split_sentence,
+      disable_typo_correction, disable_confusion, enable_sentence_check)
+    # 빈 벡터를 그대로 넣으면 JSON 에서 {} 로 나가 서버가 거부한다. 값이 있을 때만 싣는다.
+    if (length(custom_dict_names) > 0) {
+      body$custom_dict_names <- as.list(custom_dict_names)
+    }
+  } else {
+    # 세션이 있으면 서버는 사전·옵션을 세션에서 정한 값으로 쓰고 요청 값은 무시한다.
+    body$session_id <- session$session_id
   }
 
   response <- .rest_post(conn$host, "RevisionService", "CorrectError", body, conn$apikey)
@@ -64,10 +70,28 @@ correct_grammar <- function(text,
     text = text,
     result = response,
     host = conn$host,
-    apikey = conn$apikey
+    apikey = conn$apikey,
+    session = session
   )
   class(revised) <- "revised"
   revised
+}
+
+#' 교정기 옵션을 요청 본문의 config 로 만든다.
+#'
+#' correct_grammar() 와 open_session() 이 같은 옵션을 쓰므로 한 곳에 둔다.
+#'
+#' @return list
+#' @keywords internal
+.revision_config <- function(treat_as_title, disable_split_sentence,
+    disable_typo_correction, disable_confusion, enable_sentence_check) {
+  list(
+    treat_as_title = treat_as_title,
+    disable_split_sentence = disable_split_sentence,
+    disable_typo_correction = disable_typo_correction,
+    disable_confusion = disable_confusion,
+    enable_sentence_check = enable_sentence_check
+  )
 }
 
 #' Get the corrected sentence

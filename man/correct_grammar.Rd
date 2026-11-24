@@ -14,7 +14,8 @@ correct_grammar(
   disable_split_sentence = FALSE,
   disable_typo_correction = FALSE,
   disable_confusion = FALSE,
-  enable_sentence_check = FALSE
+  enable_sentence_check = FALSE,
+  session = NULL
 )
 }
 \arguments{
@@ -37,6 +38,11 @@ correct_grammar(
 \item{disable_confusion}{bool - 혼동어 판정을 끈다}
 
 \item{enable_sentence_check}{bool - 문장 단위 점검을 켠다}
+
+\item{session}{open_session() 이 돌려준 세션. 주면 그 세션으로 교정한다.
+긴 글을 여러 번에 나눠 교정할 때 앞 호출에서 본 미등록 단어를 뒤 호출에서
+알려진 말로 쓰게 한다. 이때 서버와 API 키는 세션에 담긴 값을 쓰고,
+custom_dict_names 와 교정 옵션은 \strong{무시}된다(세션을 열 때 정한 값이 쓰인다).}
 }
 \value{
 returns revised object. \verb{$revised} 에 교정문, \verb{$origin} 에 원문,

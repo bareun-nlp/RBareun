@@ -39,6 +39,8 @@ devtools::install_github("bareun-nlp/RBareun")
 - revisions: 무엇이 어떻게 바뀌었는지 표로 보기
 - truncation: 긴 글이 잘렸을 때 처리한 글자 수·버린 글자 수 보기
 - is_truncated: 응답이 잘렸는지 확인
+- open_session·close_session: 긴 문서를 나눠 교정할 세션 열고 닫기
+- session_revision·session_events: 세션이 새로 확정한 단어 확인
 - senses: 동형이의어 의미 구분(WSD) 결과 표로 보기
 - search_dict: 우리말샘 사전을 자소 패턴으로 검색
 - dict_words: 검색 결과에서 표제어만 꺼내기
@@ -235,6 +237,53 @@ rest <- substring(long_text, truncation(r)$processed_chars + 1)
 `suppressWarnings()` 나 `withCallingHandlers()` 로 `bareun_truncated_warning` 만
 받아 처리하세요.
 
+## 긴 문서는 세션으로 나눠 보내기
+
+책 한 권처럼 긴 글은 세션을 열고 작은 단위로 이어서 교정합니다. 세션은 앞 호출에서 본
+미등록 단어를 기억해 뒤 호출에서 알려진 말로 씁니다. 사용자 사전과 교정 옵션은
+`open_session()` 에서 한 번 정하고, 세션 호출에서는 `correct_grammar()` 에 준
+`custom_dict_names` 와 옵션이 무시됩니다.
+
+```
+s <- open_session(custom_dict_names = c("sample"))
+
+paragraphs <- strsplit(long_text, "\n")[[1]]
+out <- character(0)
+for (p in paragraphs[nzchar(paragraphs)]) {
+  r <- correct_grammar(p, session = s)
+  out <- c(out, revised_text(r))
+}
+
+close_session(s)       # 호출하지 않아도 서버가 유휴 10분, 최대 1시간 뒤에 닫습니다
+```
+
+세션은 열 때 쓴 API 키로만 쓸 수 있고, 동시에 열 수 있는 수에 상한이 있습니다.
+다 쓰면 닫아서 상한을 돌려받으세요.
+
+- `session_revision(r)`: 그 결과를 만든 시점의 세션 개정 번호(세션 없이 교정했으면 `NA`).
+  번호가 오르면 세션이 새 단어를 확정한 것이라 앞 결과가 달라졌을 수 있습니다.
+- `session_events(s, since_revision = 이전번호)`: 무엇이 확정됐는지 `revision`, `kind`, `word` 표로 받습니다.
+
+세션 오류는 `bareun_session_error` 조건으로 올라오고, `e$reason` 으로 가릅니다.
+
+| reason | 뜻 | 할 일 |
+| --- | --- | --- |
+| `SESSION_NOT_FOUND` | 서버가 모르는 세션(닫음, 서버 재시작) | `open_session()` 을 다시 하고 필요한 앞부분부터 다시 보냄 |
+| `SESSION_EXPIRED` | 수명(유휴 10분, 최대 1시간)이 다함 | 위와 같음 |
+| `SESSION_STORE_UNAVAILABLE` | 서버가 세션 저장소에 닿지 못함 | 세션을 다시 열지 말고 잠시 뒤 다시 하거나, 세션 없이 보냄 |
+
+```
+tryCatch(
+  correct_grammar(p, session = s),
+  bareun_session_error = function(e) {
+    if (e$reason %in% c("SESSION_NOT_FOUND", "SESSION_EXPIRED")) {
+      s <<- open_session()
+    }
+    stop(e)
+  }
+)
+```
+
 ## 오류 처리
 
 서버 호출이 실패하면 종류를 구분할 수 있는 조건(condition)이 올라옵니다.
@@ -246,6 +295,7 @@ rest <- substring(long_text, truncation(r)$processed_chars + 1)
 | `bareun_unimplemented_error` | 그 서버가 제공하지 않는 서비스 (교정 빌드가 아님) |
 | `bareun_server_error` | 서버 내부 오류 (5xx) |
 | `bareun_request_error` | 그 밖의 4xx |
+| `bareun_session_error` | 교정 세션 오류. `e$reason` 으로 가름(위 "세션" 절) |
 | `bareun_argument_error` | 인자가 잘못됨. 서버를 부르기 전에 걸린다 |
 
 ```
